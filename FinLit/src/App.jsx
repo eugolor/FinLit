@@ -48,6 +48,7 @@ function App() {
           </button>
           <Link
             to="/game"
+            state={{ fromIntro: true }}
             className="intro-btn intro-btn-start"
           >
             Start Game

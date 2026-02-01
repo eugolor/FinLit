@@ -1,20 +1,54 @@
 # FinLit — Financial Literacy Game
 
-## Running the app (intro + game with backend)
+## How to run
 
-1. **Start the backend (Flask API)** — in one terminal:
-   ```bash
-   cd src/pages && python app.py
-   ```
-   The API runs at http://localhost:5000.
+You need **two terminals**: one for the backend (Flask), one for the frontend (Vite/React).
 
-2. **Start the frontend (Vite)** — in another terminal:
-   ```bash
-   npm run dev
-   ```
-   Open http://localhost:5173. Click **Start Game** to play; the game’s API calls are proxied from Vite to the Flask backend.
+### 1. Backend (Flask API)
 
-**Alternative (game only, no React intro):** Run only the backend and open http://localhost:5000 — the Flask app serves `index.html` (the game) at `/`.
+From the **project root** (`FinLit/`):
+
+```bash
+python src/App.py
+```
+
+Or from inside `src`:
+
+```bash
+cd src && python App.py
+```
+
+- API runs at **http://localhost:5000**
+- Uses precomputed stock data in `src/data/precomputed/` (AAPL, MSFT, TSLA, NVDA, SPY)
+
+**Python deps:** `flask`, `flask-cors`. Install with:
+
+```bash
+pip install flask flask-cors
+```
+
+### 2. Frontend (React + Vite)
+
+In a **second terminal**, from the project root:
+
+```bash
+npm install
+npm run dev
+```
+
+- App runs at **http://localhost:5173**
+- Vite proxies `/api` to the Flask backend (see `vite.config.js`)
+
+Open **http://localhost:5173** in your browser. Use **Start Game** to play; the Stocks icon opens the stock trading page (buy/sell uses the backend and year-based prices).
+
+### Optional: Regenerate stock data
+
+To recompute stock predictions (writes to `src/data/precomputed/`):
+
+```bash
+pip install numpy pandas yfinance
+python src/precompute_stock_prediction.py
+```
 
 ---
 

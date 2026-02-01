@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import './FinancialGame.css'
 import gamePageBg from '../assets/GamePageBackground.png'
@@ -6,7 +6,20 @@ import cashStashImg from '../assets/CashStash.png'
 import charityImg from '../assets/Charity.png'
 import savingsImg from '../assets/Savings.png'
 import stocksImg from '../assets/Stocks.png'
-import { useGame } from '../hooks/useGame'
+
+const GAME_PROFILE_KEY = 'finlit-game-profile'
+const GAME_BALANCES_KEY = 'finlit-game-balances'
+const GAME_PROFILE_DONE_KEY = 'finlit-game-profile-done'
+
+/** Round money to 2 decimal places to avoid float drift. */
+function roundMoney(value) {
+  return Math.round(Number(value) * 100) / 100
+}
+
+/** Format money for display (2 decimals). */
+function formatMoney(value) {
+  return roundMoney(value).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
 
 const TFSA_INFO = {
   name: 'TFSA',
@@ -47,40 +60,180 @@ const CHARITY_INFO = {
 }
 
 function FinancialGame() {
-  const [showModal, setShowModal] = useState(true)
+  const [showModal, setShowModal] = useState(null)
   const [showSavingsModal, setShowSavingsModal] = useState(false)
   const [showStocksModal, setShowStocksModal] = useState(false)
   const [showCashStashModal, setShowCashStashModal] = useState(false)
   const [showCharityModal, setShowCharityModal] = useState(false)
   const [donationAmount, setDonationAmount] = useState('')
+  const [savingsTransferAmount, setSavingsTransferAmount] = useState('')
+  const [stocksTransferAmount, setStocksTransferAmount] = useState('')
   const [name, setName] = useState('')
   const [age, setAge] = useState('')
   const [startingMoney, setStartingMoney] = useState('')
   const [financialGoals, setFinancialGoals] = useState('')
+  const [cash, setCash] = useState(0)
+  const [savings, setSavings] = useState(0)
+  const [stocks, setStocks] = useState(0)
+  const [charity, setCharity] = useState(0)
+  const [stockHoldings, setStockHoldings] = useState({})
+  const [gameYear, setGameYear] = useState(1)
+  const [transferError, setTransferError] = useState('')
 
-  const { gameState, startGame, advanceYear, buyStock, loading } = useGame();
-  
+  useEffect(() => {
+    if (typeof sessionStorage === 'undefined') return
+    try {
+      const profileJson = sessionStorage.getItem(GAME_PROFILE_KEY)
+      const profile = profileJson ? JSON.parse(profileJson) : null
+      if (profile) {
+        setName(profile.name ?? '')
+        setAge(profile.age ?? '')
+        setStartingMoney(profile.startingMoney ?? '')
+        setFinancialGoals(profile.financialGoals ?? '')
+      }
+      setShowModal(profile ? false : true)
+      const balancesJson = sessionStorage.getItem(GAME_BALANCES_KEY)
+      const balances = balancesJson ? JSON.parse(balancesJson) : null
+      if (balances) {
+        setCash(roundMoney(balances.cash ?? 0))
+        setSavings(roundMoney(balances.savings ?? 0))
+        setStocks(roundMoney(balances.stocks ?? 0))
+        setCharity(roundMoney(balances.charity ?? 0))
+        setStockHoldings(balances.stockHoldings && typeof balances.stockHoldings === 'object' ? balances.stockHoldings : {})
+        setGameYear(Math.max(1, parseInt(balances.gameYear, 10) || 1))
+      } else if (profile && profile.startingMoney !== undefined && profile.startingMoney !== '') {
+        const initialCash = roundMoney(profile.startingMoney) || 0
+        setCash(initialCash)
+        setSavings(0)
+        setStocks(0)
+        setCharity(0)
+        setStockHoldings({})
+        setGameYear(1)
+        sessionStorage.setItem(GAME_BALANCES_KEY, JSON.stringify({
+          cash: initialCash,
+          savings: 0,
+          stocks: 0,
+          charity: 0,
+          stockHoldings: {},
+          gameYear: 1,
+        }))
+      }
+    } catch (_) {}
+  }, [])
+
+  const saveBalances = (c, s, st, ch, sh, gy) => {
+    try {
+      const raw = sessionStorage.getItem(GAME_BALANCES_KEY)
+      const prev = raw ? JSON.parse(raw) : {}
+      sessionStorage.setItem(GAME_BALANCES_KEY, JSON.stringify({
+        cash: roundMoney(c ?? prev.cash ?? cash),
+        savings: roundMoney(s ?? prev.savings ?? savings),
+        stocks: roundMoney(st ?? prev.stocks ?? stocks),
+        charity: roundMoney(ch ?? prev.charity ?? charity),
+        stockHoldings: sh ?? prev.stockHoldings ?? stockHoldings,
+        gameYear: gy ?? prev.gameYear ?? gameYear,
+      }))
+    } catch (_) {}
+  }
+
   const handleStartJourney = (e) => {
-    e.preventDefault();
-    startGame(parseInt(age), parseInt(startingMoney), financialGoals.split(','));
-    setShowModal(false);
-  };
+    e.preventDefault()
+    const initialCash = roundMoney(startingMoney) || 0
+    setCash(initialCash)
+    setSavings(0)
+    setStocks(0)
+    setCharity(0)
+    setStockHoldings({})
+    setGameYear(1)
+    try {
+      sessionStorage.setItem(GAME_PROFILE_DONE_KEY, 'true')
+      sessionStorage.setItem(GAME_PROFILE_KEY, JSON.stringify({
+        name,
+        age,
+        startingMoney,
+        financialGoals,
+      }))
+      saveBalances(initialCash, roundMoney(0), roundMoney(0), roundMoney(0), {}, 1)
+    } catch (_) {}
+    setShowModal(false)
+  }
 
-  // const handleStartJourney = (e) => {
-  //   e.preventDefault()
-  //   setShowModal(false)
-  // }
+  const handleTransferToSavings = () => {
+    setTransferError('')
+    const amount = roundMoney(savingsTransferAmount)
+    if (!Number.isFinite(amount) || amount <= 0) {
+      setTransferError('Please enter a valid amount greater than 0.')
+      return
+    }
+    const currentCash = roundMoney(cash)
+    if (amount > currentCash) {
+      setTransferError(`You only have $${formatMoney(currentCash)} in cash.`)
+      return
+    }
+    const newCash = roundMoney(currentCash - amount)
+    const newSavings = roundMoney(savings + amount)
+    setCash(newCash)
+    setSavings(newSavings)
+    setSavingsTransferAmount('')
+    setTransferError('')
+    saveBalances(newCash, newSavings, stocks, charity)
+  }
+
+  const handleTransferToStocks = () => {
+    setTransferError('')
+    const amount = roundMoney(stocksTransferAmount)
+    if (!Number.isFinite(amount) || amount <= 0) {
+      setTransferError('Please enter a valid amount greater than 0.')
+      return
+    }
+    const currentCash = roundMoney(cash)
+    if (amount > currentCash) {
+      setTransferError(`You only have $${formatMoney(currentCash)} in cash.`)
+      return
+    }
+    const newCash = roundMoney(currentCash - amount)
+    const newStocks = roundMoney(stocks + amount)
+    setCash(newCash)
+    setStocks(newStocks)
+    setStocksTransferAmount('')
+    setTransferError('')
+    saveBalances(newCash, savings, newStocks, charity)
+  }
+
+  const handleDonateToCharity = () => {
+    setTransferError('')
+    const amount = roundMoney(donationAmount)
+    if (!Number.isFinite(amount) || amount <= 0) {
+      setTransferError('Please enter a valid amount greater than 0.')
+      return
+    }
+    const currentCash = roundMoney(cash)
+    if (amount > currentCash) {
+      setTransferError(`You only have $${formatMoney(currentCash)} in cash.`)
+      return
+    }
+    const newCash = roundMoney(currentCash - amount)
+    const newCharity = roundMoney(charity + amount)
+    setCash(newCash)
+    setCharity(newCharity)
+    setDonationAmount('')
+    setTransferError('')
+    saveBalances(newCash, savings, stocks, newCharity)
+  }
 
   return (
     <div
       className="game-page"
       style={{ backgroundImage: `url(${gamePageBg})` }}
     >
-      <Link to="/" className="game-back-link">
-        ← Back to Intro
+      <Link to="/" className="game-back-link" aria-label="Back to intro">
+        ←
+      </Link>
+      <Link to="/treasure" className="game-forward-link" aria-label="Go to Treasure">
+        →
       </Link>
 
-      {showModal && (
+      {showModal === true && (
         <div className="game-modal-overlay" aria-modal="true" role="dialog">
           <div className="game-modal">
             <h2 className="game-modal-title">Begin Your Journey</h2>
@@ -142,7 +295,7 @@ function FinancialGame() {
       )}
 
       <div className="game-page-content">
-        {!showModal && (
+        {showModal === false && (
           <div
             className="game-cashstash-wrap game-cashstash-wrap--clickable"
             role="button"
@@ -156,7 +309,7 @@ function FinancialGame() {
               alt=""
               className="game-cashstash-img"
             />
-            <p className="game-money-display">{startingMoney}</p>
+            <p className="game-money-display">{formatMoney(cash)}</p>
           </div>
         )}
       </div>
@@ -174,10 +327,13 @@ function FinancialGame() {
           >
             <div className="game-cashstash-modal-header">
               <h2 className="game-info-modal-title">Your cash</h2>
-              <p className="game-cashstash-modal-value">{startingMoney}</p>
+              <p className="game-cashstash-modal-value">{formatMoney(cash)}</p>
+              <p className="game-cashstash-modal-summary">
+                Total: ${formatMoney(cash + savings + stocks + charity)} (Cash + Savings + Stocks + Charity)
+              </p>
             </div>
             <div className="game-info-modal-body">
-              <p className="game-cashstash-modal-subtitle">Ways to use your cash</p>
+              <p className="game-cashstash-modal-subtitle">Transfer from your total cash into:</p>
               <ul className="game-cashstash-options">
                 <li className="game-cashstash-option">
                   <img src={savingsImg} alt="" className="game-cashstash-option-icon" />
@@ -252,6 +408,30 @@ function FinancialGame() {
               >
                 Official TFSA info (Government of Canada) →
               </a>
+              <div className="game-transfer-section">
+                <p className="game-transfer-balance">Your savings: <strong>${formatMoney(savings)}</strong></p>
+                <p className="game-transfer-hint">Cash available: ${formatMoney(cash)}</p>
+                <label className="game-transfer-label">
+                  Amount to transfer
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={savingsTransferAmount}
+                    onChange={(e) => setSavingsTransferAmount(e.target.value)}
+                    className="game-modal-input game-transfer-input"
+                    placeholder="e.g. 100"
+                  />
+                </label>
+                {transferError && showSavingsModal && <p className="game-transfer-error" role="alert">{transferError}</p>}
+                <button
+                  type="button"
+                  className="game-modal-btn game-transfer-btn"
+                  onClick={handleTransferToSavings}
+                >
+                  Transfer to Savings
+                </button>
+              </div>
             </div>
             <button
               type="button"
@@ -303,6 +483,30 @@ function FinancialGame() {
               >
                 Learn more about stocks →
               </a>
+              <div className="game-transfer-section">
+                <p className="game-transfer-balance">Your stocks: <strong>${formatMoney(stocks)}</strong></p>
+                <p className="game-transfer-hint">Cash available: ${formatMoney(cash)}</p>
+                <label className="game-transfer-label">
+                  Amount to transfer
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={stocksTransferAmount}
+                    onChange={(e) => setStocksTransferAmount(e.target.value)}
+                    className="game-modal-input game-transfer-input"
+                    placeholder="e.g. 100"
+                  />
+                </label>
+                {transferError && showStocksModal && <p className="game-transfer-error" role="alert">{transferError}</p>}
+                <button
+                  type="button"
+                  className="game-modal-btn game-transfer-btn"
+                  onClick={handleTransferToStocks}
+                >
+                  Transfer to Stocks
+                </button>
+              </div>
             </div>
             <button
               type="button"
@@ -315,34 +519,31 @@ function FinancialGame() {
         </div>
       )}
 
-      {!showModal && (
+      {showModal === false && (
         <div className="game-bottom-icons">
           <div
             className="game-bottom-icon-wrap game-bottom-icon-wrap--clickable"
             role="button"
             tabIndex={0}
-            onClick={() => setShowSavingsModal(true)}
-            onKeyDown={(e) => e.key === 'Enter' && setShowSavingsModal(true)}
+            onClick={() => { setTransferError(''); setShowSavingsModal(true) }}
+            onKeyDown={(e) => { if (e.key === 'Enter') { setTransferError(''); setShowSavingsModal(true) } }}
             aria-label="Open Savings (TFSA) info"
           >
             <img src={savingsImg} alt="Savings" className="game-bottom-icon" />
           </div>
-          <div
+          <Link
+            to="/game/stocks"
             className="game-bottom-icon-wrap game-bottom-icon-wrap--clickable"
-            role="button"
-            tabIndex={0}
-            onClick={() => setShowStocksModal(true)}
-            onKeyDown={(e) => e.key === 'Enter' && setShowStocksModal(true)}
-            aria-label="Open Stocks info"
+            aria-label="Stock market – view and trade stocks"
           >
             <img src={stocksImg} alt="Stocks" className="game-bottom-icon" />
-          </div>
+          </Link>
           <div
             className="game-bottom-icon-wrap game-bottom-icon-wrap--clickable"
             role="button"
             tabIndex={0}
-            onClick={() => setShowCharityModal(true)}
-            onKeyDown={(e) => e.key === 'Enter' && setShowCharityModal(true)}
+            onClick={() => { setTransferError(''); setShowCharityModal(true) }}
+            onKeyDown={(e) => { if (e.key === 'Enter') { setTransferError(''); setShowCharityModal(true) } }}
             aria-label="Open Charity / donation info"
           >
             <img src={charityImg} alt="Charity" className="game-bottom-icon" />
@@ -371,18 +572,28 @@ function FinancialGame() {
               <p className="game-info-modal-why">
                 <strong>Why it matters:</strong> {CHARITY_INFO.why_important}
               </p>
-              <label className="game-charity-donation-label">
-                Donation amount
+              <p className="game-transfer-balance">Total donated: <strong>${formatMoney(charity)}</strong></p>
+              <p className="game-transfer-hint">Cash available: ${formatMoney(cash)}</p>
+              <label className="game-transfer-label">
+                Amount to donate
                 <input
                   type="number"
                   min="0"
-                  step="1"
+                  step="0.01"
                   value={donationAmount}
                   onChange={(e) => setDonationAmount(e.target.value)}
-                  className="game-modal-input game-charity-donation-input"
+                  className="game-modal-input game-transfer-input"
                   placeholder="e.g. 50"
                 />
               </label>
+              {transferError && showCharityModal && <p className="game-transfer-error" role="alert">{transferError}</p>}
+              <button
+                type="button"
+                className="game-modal-btn game-transfer-btn"
+                onClick={handleDonateToCharity}
+              >
+                Donate
+              </button>
               <a
                 href={CHARITY_INFO.resource_url}
                 target="_blank"
