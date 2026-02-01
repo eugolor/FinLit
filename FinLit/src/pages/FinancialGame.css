@@ -1,1093 +1,1094 @@
 .game-page {
-  position: relative;
-  min-height: 100vh;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-start;
-}
-
-.game-back-link {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  z-index: 10;
-  padding: 0.5rem 1rem;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #5c3d2e;
-  background: rgba(255, 255, 255, 0.95);
-  border: 2px solid #d4c9bc;
-  border-radius: 999px;
-  text-decoration: none;
-  box-shadow: 0 2px 8px rgba(45, 31, 20, 0.1);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-}
-
-.game-back-link:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(45, 31, 20, 0.12);
-  border-color: #a88b6a;
-}
-
-.game-page-content {
-  position: relative;
-  z-index: 1;
-  text-align: center;
-  padding: 2rem;
-  color: #2d1f14;
-}
-
-.game-page-content h1 {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-}
-
-.game-page-content p {
-  font-size: 1.1rem;
-  opacity: 0.9;
-}
-
-.game-bottom-icons {
-  position: absolute;
-  bottom: 2rem;
-  left: 0;
-  right: 0;
-  z-index: 1;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  gap: 3rem;
-  padding: 0 1rem;
-}
-
-.game-bottom-icon-wrap {
-  position: relative;
-  display: inline-block;
-}
-
-.game-bottom-icon-wrap--clickable {
-  cursor: pointer;
-}
-
-.game-bottom-icon-wrap::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 140%;
-  height: 140%;
-  background: radial-gradient(
-    circle,
-    rgba(252, 224, 138, 0.6) 0%,
-    rgba(249, 211, 113, 0.35) 35%,
-    rgba(232, 194, 90, 0.15) 55%,
-    transparent 70%
-  );
-  border-radius: 50%;
-  filter: blur(20px);
-  z-index: -1;
-  opacity: 0;
-  transition: opacity 0.25s ease;
-}
-
-.game-bottom-icon-wrap:hover::after {
-  opacity: 1;
-}
-
-.game-bottom-icon {
-  display: block;
-  position: relative;
-  z-index: 0;
-  height: auto;
-  max-height: 32vh;
-  max-width: 260px;
-  object-fit: contain;
-  transition: transform 0.25s ease;
-}
-
-.game-bottom-icon-wrap:hover .game-bottom-icon {
-  transform: scale(1.08);
-}
-
-.game-cashstash-wrap--clickable {
-  cursor: pointer;
-}
-
-/* ================= MODAL ================= */
-
-.game-modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 20;
-  background: rgba(45, 31, 20, 0.4);
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.5rem;
-}
-
-.game-modal {
-  background: #fffefb;
-  border: 2px solid #e8e0d5;
-  border-radius: 1rem;
-  box-shadow: 0 20px 40px rgba(45, 31, 20, 0.12), 0 4px 12px rgba(45, 31, 20, 0.08);
-  max-width: 600px;
-  width: 100%;
-  max-height: 85vh;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  display: flex;
-  flex-direction: column;
-  font-family: 'Comic Sans MS', 'Chalkboard SE', system-ui, sans-serif;
-  letter-spacing: 0.01em;
-}
-
-.game-modal--large {
-  max-width: 800px;
-}
-
-.game-modal--summary {
-  max-width: 650px;
-}
-
-.game-modal-title {
-  margin: 0 0 0.35rem;
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: #2d1f14;
-  text-align: center;
-  line-height: 1.3;
-  padding: 1.75rem 2rem 0.5rem;
-  flex-shrink: 0;
-}
-
-.game-modal-subtitle {
-  margin: 0 0 1.5rem;
-  font-size: 0.95rem;
-  color: #6b5344;
-  text-align: center;
-  line-height: 1.4;
-  padding: 0 2rem;
-  flex-shrink: 0;
-}
-
-.game-modal-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.1rem;
-  padding: 0 2rem;
-  flex: 1;
-}
-
-.game-modal-label {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #3d3229;
-}
-
-.game-modal-input {
-  padding: 0.65rem 0.9rem;
-  font-size: 1rem;
-  font-family: inherit;
-  border: 2px solid #d4c9bc;
-  border-radius: 0.5rem;
-  background: #fff;
-  color: #2d1f14;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.game-modal-input::placeholder {
-  color: #9a8b7a;
-}
-
-.game-modal-input:focus {
-  outline: none;
-  border-color: #8b7355;
-  box-shadow: 0 0 0 3px rgba(139, 115, 90, 0.15);
-}
-
-.game-modal-textarea {
-  resize: vertical;
-  min-height: 4rem;
-}
-
-.game-modal-btn {
-  margin-top: 0.35rem;
-  padding: 0.9rem 1.5rem;
-  font-size: 1.1rem;
-  font-weight: 700;
-  font-family: inherit;
-  color: #2d1f14;
-  background: linear-gradient(180deg, #fce08a 0%, #f9d371 50%, #e8c25a 100%);
-  border: 2px solid #c4a84a;
-  border-radius: 999px;
-  box-shadow: 0 2px 8px rgba(45, 31, 20, 0.1);
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-  flex-shrink: 0;
-  margin-left: 2rem;
-  margin-right: 2rem;
-}
-
-.game-modal-btn:last-child {
-  margin-bottom: 1.75rem;
-}
-
-.game-modal-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(45, 31, 20, 0.15);
-  border-color: #a88b3a;
-}
-
-.game-modal-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 6px rgba(45, 31, 20, 0.1);
-}
-
-/* ================= INFO MODAL (TFSA etc.) ================= */
-
-.game-info-modal-overlay {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.5rem;
-}
-
-.game-info-modal {
-  background: #fffefb;
-  border: 2px solid #e8e0d5;
-  border-radius: 1rem;
-  box-shadow: 0 20px 40px rgba(45, 31, 20, 0.12), 0 4px 12px rgba(45, 31, 20, 0.08);
-  max-width: 480px;
-  width: 100%;
-  max-height: 90vh;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  font-family: 'Comic Sans MS', 'Chalkboard SE', system-ui, sans-serif;
-  letter-spacing: 0.01em;
-}
-
-.game-info-modal-header {
-  padding: 1.5rem 1.5rem 1.25rem;
-  text-align: center;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, transparent 100%);
-  border-bottom: 1px solid rgba(45, 31, 20, 0.08);
-}
-
-.game-info-modal-icon {
-  font-size: 2.25rem;
-  display: block;
-  margin-bottom: 0.5rem;
-  line-height: 1;
-}
-
-.game-info-modal-title {
-  margin: 0 0 0.35rem;
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: #2d1f14;
-  line-height: 1.3;
-}
-
-.game-info-modal-subtitle {
-  margin: 0;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #6b5344;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-.game-info-modal-body {
-  padding: 1.25rem 1.5rem 1rem;
-  overflow-y: auto;
-  flex: 1;
-  -webkit-overflow-scrolling: touch;
-}
-
-.game-info-modal-desc {
-  margin: 0 0 1rem;
-  font-size: 0.9375rem;
-  line-height: 1.55;
-  color: #3d3229;
-}
-
-.game-info-modal-why {
-  margin: 0 0 1.25rem;
-  padding: 1rem 1.1rem;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  color: #3d3229;
-  background: rgba(45, 31, 20, 0.04);
-  border-radius: 0.6rem;
-  border-left: 3px solid #22c55e;
-}
-
-.game-info-modal-why strong {
-  display: block;
-  margin-bottom: 0.35rem;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #5c3d2e;
-  letter-spacing: 0.02em;
-}
-
-.game-info-modal-dl {
-  margin: 0 0 1.25rem;
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.4rem 1.5rem;
-  font-size: 0.875rem;
-  color: #3d3229;
-  line-height: 1.45;
-}
-
-.game-info-modal-dl dt {
-  font-weight: 600;
-  color: #5c3d2e;
-}
-
-.game-info-modal-dl dd {
-  margin: 0;
-  font-weight: 500;
-}
-
-.game-info-modal-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #22c55e;
-  text-decoration: none;
-  padding: 0.4rem 0;
-  border-radius: 0.35rem;
-  transition: color 0.2s ease, background 0.2s ease;
-}
-
-.game-info-modal-link:hover {
-  color: #1a9e47;
-  background: rgba(34, 197, 94, 0.08);
-}
-
-.game-info-modal-link--blue {
-  color: #3b82f6;
-}
-
-.game-info-modal-link--blue:hover {
-  color: #2563eb;
-  background: rgba(59, 130, 246, 0.08);
-}
-
-.game-info-modal-link--charity {
-  color: #e11d48;
-}
-
-.game-info-modal-link--charity:hover {
-  color: #be123c;
-  background: rgba(225, 29, 72, 0.08);
-}
-
-.game-charity-donation-label {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  margin: 1.25rem 0 1rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #3d3229;
-}
-
-.game-charity-donation-input {
-  max-width: 12rem;
-}
-
-.game-info-modal-close {
-  margin: 0 1.5rem 1.25rem;
-  align-self: center;
-  min-width: 8rem;
-}
-
-/* ================= CASHSTASH MODAL (Your cash + ways to use it) ================= */
-
-.game-cashstash-modal .game-info-modal-body {
-  padding-top: 0.75rem;
-}
-
-.game-cashstash-modal-header {
-  padding: 1.5rem 1.5rem 1rem;
-  text-align: center;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, transparent 100%);
-  border-bottom: 1px solid rgba(45, 31, 20, 0.08);
-}
-
-.game-cashstash-modal-value {
-  margin: 0.5rem 0 0;
-  font-size: 2rem;
-  font-weight: 800;
-  color: #2d1f14;
-  letter-spacing: 0.02em;
-}
-
-.game-cashstash-modal-subtitle {
-  margin: 0 0 1rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #5c3d2e;
-  letter-spacing: 0.02em;
-}
-
-.game-cashstash-options {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.game-cashstash-option {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem 1.1rem;
-  background: rgba(45, 31, 20, 0.04);
-  border-radius: 0.6rem;
-  border: 1px solid rgba(45, 31, 20, 0.08);
-  transition: background 0.2s ease, border-color 0.2s ease;
-}
-
-.game-cashstash-option:hover {
-  background: rgba(45, 31, 20, 0.06);
-  border-color: rgba(45, 31, 20, 0.12);
-}
-
-.game-cashstash-option-icon {
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  object-fit: contain;
-}
-
-.game-cashstash-option-text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  font-size: 0.9rem;
-  color: #3d3229;
-  line-height: 1.4;
-}
-
-.game-cashstash-option-text strong {
-  font-size: 1rem;
-  color: #2d1f14;
-}
-
-/* ================= GAME HUD (Profile Info) ================= */
-
-.game-hud {
-  position: relative;
-  z-index: 5;
-  background: rgba(255, 254, 251, 0.95);
-  backdrop-filter: blur(8px);
-  border-bottom: 2px solid rgba(212, 201, 188, 0.8);
-  padding: 1.25rem 1.5rem;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-  box-shadow: 0 2px 12px rgba(45, 31, 20, 0.08);
-}
-
-.game-hud-section {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
-  align-items: center;
-}
-
-.game-hud-item {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-size: 0.95rem;
-}
-
-.game-hud-label {
-  font-weight: 600;
-  color: #5c3d2e;
-  letter-spacing: 0.02em;
-}
-
-.game-hud-value {
-  font-weight: 700;
-  color: #2d1f14;
-  font-size: 1.05rem;
-}
-
-/* ================= GAME PAGE CONTENT ================= */
-
-.game-page-content {
-  position: relative;
-  z-index: 1;
-  flex: 1;
-  padding: 2rem 1.5rem 3rem;
-  max-width: 1200px;
-  width: 100%;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 2.5rem;
-  overflow-y: auto;
-}
-
-/* ================= CASHSTASH SECTION ================= */
-
-.game-cashstash-wrap {
-  position: relative;
-  display: inline-block;
-  align-self: center;
-  transform: none;
-  margin: 1rem 0;
-}
-
-.game-cashstash-wrap--clickable {
-  cursor: pointer;
-}
-
-.game-cashstash-wrap::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 140%;
-  height: 140%;
-  background: radial-gradient(
-    circle,
-    rgba(252, 224, 138, 0.6) 0%,
-    rgba(249, 211, 113, 0.35) 35%,
-    rgba(232, 194, 90, 0.15) 55%,
-    transparent 70%
-  );
-  border-radius: 50%;
-  filter: blur(20px);
-  z-index: -1;
-  opacity: 0;
-  transition: opacity 0.25s ease;
-}
-
-.game-cashstash-wrap:hover::after {
-  opacity: 1;
-}
-
-.game-cashstash-img {
-  display: block;
-  position: relative;
-  z-index: 0;
-  max-width: 100%;
-  height: auto;
-  max-height: 280px;
-  object-fit: contain;
-  transition: transform 0.25s ease;
-}
-
-.game-cashstash-wrap:hover .game-cashstash-img {
-  transform: scale(1.08);
-}
-
-.game-money-display {
-  position: absolute;
-  left: 50%;
-  top: 58%;
-  transform: translate(-50%, -50%);
-  margin: 0;
-  font-size: 50px;
-  font-weight: 800;
-  color: #c41e3a;
-  -webkit-text-stroke: 2px #fff;
-  paint-order: stroke fill;
-  text-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.4),
-    0 1px 2px rgba(255, 255, 255, 0.8);
-  letter-spacing: 0.02em;
-  pointer-events: none;
-}
-
-/* ================= PORTFOLIO SECTION ================= */
-
-.game-portfolio-section {
-  background: rgba(255, 254, 251, 0.95);
-  backdrop-filter: blur(8px);
-  border: 2px solid rgba(212, 201, 188, 0.8);
-  border-radius: 1.25rem;
-  padding: 1.75rem;
-  box-shadow: 0 8px 24px rgba(45, 31, 20, 0.08);
-}
-
-.game-portfolio-section h3 {
-  margin: 0 0 1.5rem 0;
-  font-size: 1.35rem;
-  color: #2d1f14;
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-
-.game-portfolio-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1.25rem;
-}
-
-.game-portfolio-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem 1.25rem;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(245, 245, 242, 0.6) 100%);
-  border: 1px solid rgba(212, 201, 188, 0.6);
-  border-radius: 0.75rem;
-  transition: all 0.2s ease;
-}
-
-.game-portfolio-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(45, 31, 20, 0.1);
-  border-color: rgba(212, 201, 188, 1);
-}
-
-.game-portfolio-icon {
-  font-size: 2rem;
-  flex-shrink: 0;
-}
-
-.game-portfolio-text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  min-width: 0;
-}
-
-.game-portfolio-text strong {
-  font-size: 0.95rem;
-  color: #2d1f14;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.game-portfolio-text span {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #5c3d2e;
-}
-
-.game-portfolio-empty {
-  color: #6b5344;
-  font-size: 1rem;
-  text-align: center;
-  padding: 2rem 1rem;
-}
-
-/* ================= TAX INFO SECTION ================= */
-
-.game-tax-info {
-  background: linear-gradient(135deg, rgba(255, 254, 251, 0.95) 0%, rgba(245, 245, 242, 0.8) 100%);
-  border: 1px solid rgba(212, 201, 188, 0.6);
-  border-radius: 0.75rem;
-  padding: 1.25rem 1.5rem;
-  box-shadow: 0 4px 12px rgba(45, 31, 20, 0.06);
-}
-
-.game-tax-info p {
-  margin: 0.5rem 0;
-  font-size: 0.95rem;
-  color: #3d3229;
-}
-
-.game-tax-info strong {
-  color: #2d1f14;
-}
-
-/* ================= ACTION BUTTONS ================= */
-
-.game-action-buttons {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin: 1rem 0;
-}
-
-.game-action-btn {
-  padding: 0.9rem 1.8rem;
-  font-size: 1rem;
-  font-weight: 700;
-  font-family: inherit;
-  border: none;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(45, 31, 20, 0.1);
-}
-
-.game-action-btn--primary {
-  background: linear-gradient(180deg, #fce08a 0%, #f9d371 50%, #e8c25a 100%);
-  color: #2d1f14;
-  border: 2px solid #c4a84a;
-}
-
-.game-action-btn--primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(45, 31, 20, 0.15);
-}
-
-.game-action-btn--secondary {
-  background: linear-gradient(180deg, rgba(255, 254, 251, 0.9) 0%, rgba(245, 245, 242, 0.8) 100%);
-  color: #2d1f14;
-  border: 2px solid #d4c9bc;
-}
-
-.game-action-btn--secondary:hover {
-  background: linear-gradient(180deg, rgba(255, 254, 251, 1) 0%, rgba(245, 245, 242, 0.95) 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(45, 31, 20, 0.1);
-}
-
-/* ================= CHECKPOINTS SECTION ================= */
-
-.game-checkpoints-section {
-  background: rgba(255, 254, 251, 0.95);
-  border: 2px solid rgba(212, 201, 188, 0.8);
-  border-radius: 1.25rem;
-  padding: 1.75rem;
-  box-shadow: 0 8px 24px rgba(45, 31, 20, 0.08);
-}
-
-.game-checkpoints-section h4 {
-  margin: 0 0 1.5rem 0;
-  font-size: 1.2rem;
-  color: #2d1f14;
-}
-
-.game-checkpoints-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1rem;
-}
-
-.game-checkpoint-badge {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1rem;
-  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 165, 0, 0.05) 100%);
-  border: 2px solid rgba(255, 215, 0, 0.3);
-  border-radius: 0.75rem;
-  font-size: 1rem;
-  color: #3d3229;
-}
-
-.game-checkpoint-badge span:first-child {
-  font-size: 1.8rem;
-  flex-shrink: 0;
-}
-
-/* ================= INVESTMENT SECTIONS ================= */
-
-.game-investment-recommendation {
-  padding: 1.5rem 2rem;
-  background: rgba(248, 247, 245, 0.8);
-  border-top: 1px solid rgba(212, 201, 188, 0.4);
-  border-bottom: 1px solid rgba(212, 201, 188, 0.4);
-  flex-shrink: 0;
-}
-
-.game-investment-recommendation h3 {
-  margin: 0 0 1rem 0;
-  font-size: 1.1rem;
-  color: #2d1f14;
-}
-
-.game-allocation-bars {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.game-allocation-bar {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: 0.4rem;
-  overflow: hidden;
-  height: 32px;
-}
-
-.game-allocation-bar-fill {
-  height: 100%;
-  transition: width 0.3s ease;
-}
-
-.game-allocation-bar-label {
-  padding: 0 0.75rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #3d3229;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.game-investment-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.25rem;
-  padding: 1.5rem 2rem;
-  flex: 1;
-  overflow-y: auto;
-}
-
-.game-investment-card {
-  display: flex;
-  flex-direction: column;
-  background: white;
-  border: 3px solid;
-  border-radius: 0.75rem;
-  overflow: hidden;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(45, 31, 20, 0.08);
-}
-
-.game-investment-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(45, 31, 20, 0.12);
-}
-
-.game-investment-card-header {
-  padding: 1rem;
-  color: white;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.game-investment-card-icon {
-  font-size: 1.8rem;
-  flex-shrink: 0;
-}
-
-.game-investment-card-header h3 {
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 700;
-}
-
-.game-investment-card-body {
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  flex: 1;
-}
-
-.game-investment-card-desc {
-  margin: 0;
-  font-size: 0.85rem;
-  line-height: 1.4;
-  color: #3d3229;
-}
-
-.game-investment-card-stats {
-  margin: 0;
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.5rem 0.75rem;
-  font-size: 0.8rem;
-  color: #3d3229;
-}
-
-.game-investment-card-stats dt {
-  font-weight: 600;
-  color: #5c3d2e;
-}
-
-.game-investment-card-stats dd {
-  margin: 0;
-  text-align: right;
-  font-weight: 500;
-}
-
-.game-investment-btn {
-  padding: 0.75rem 1.25rem;
-  background: linear-gradient(180deg, #fce08a 0%, #f9d371 50%, #e8c25a 100%);
-  border: 2px solid #c4a84a;
-  border-radius: 0.5rem;
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #2d1f14;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  align-self: stretch;
-  margin-top: auto;
-}
-
-.game-investment-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(196, 168, 74, 0.3);
-}
-
-/* ================= MODAL OVERLAY ================= */
-
-.game-modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 20;
-  background: rgba(45, 31, 20, 0.4);
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.5rem;
-  overflow-y: auto;
-}
-
-.game-modal-overlay--nested {
-  z-index: 25;
-  background: rgba(45, 31, 20, 0.6);
-}
-
-/* ================= SUMMARY STYLES ================= */
-
-.game-summary-content {
-  padding: 0 2rem 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  flex: 1;
-  overflow-y: auto;
-}
-
-.game-summary-section {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.game-summary-section h3 {
-  margin: 0;
-  font-size: 1.1rem;
-  color: #2d1f14;
-  font-weight: 700;
-}
-
-.game-summary-section p {
-  margin: 0.35rem 0;
-  font-size: 0.95rem;
-  color: #3d3229;
-}
-
-.game-summary-personality-desc {
-  font-style: italic;
-  color: #6b5344;
-  padding: 0.75rem 1rem;
-  background: rgba(248, 247, 245, 0.6);
-  border-left: 3px solid #f9d371;
-  border-radius: 0.35rem;
-}
-
-.game-summary-tier {
-  background: linear-gradient(135deg, rgba(252, 224, 138, 0.1) 0%, rgba(249, 211, 113, 0.05) 100%);
-  padding: 1rem;
-  border-radius: 0.75rem;
-  border: 1px solid rgba(252, 224, 138, 0.3);
-}
-
-.game-summary-feedback-item {
-  padding: 0.75rem 1rem;
-  background: rgba(248, 247, 245, 0.8);
-  border-left: 3px solid #22c55e;
-  border-radius: 0.35rem;
-  margin: 0;
-  font-size: 0.9rem;
-  line-height: 1.4;
-}
-
-.game-summary-buttons {
-  display: flex;
-  gap: 1rem;
-  padding: 0 2rem 1.75rem;
-  flex-wrap: wrap;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.game-summary-buttons .game-modal-btn {
-  margin: 0;
-  flex: 1;
-  min-width: 150px;
-}
-
-/* ================= MODAL CLOSE BUTTON ================= */
-
-.game-modal-close-btn {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  width: 32px;
-  height: 32px;
-  background: rgba(45, 31, 20, 0.1);
-  border: 1px solid rgba(45, 31, 20, 0.2);
-  border-radius: 50%;
-  font-size: 1.5rem;
-  color: #2d1f14;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-}
-
-.game-modal-close-btn:hover {
-  background: rgba(45, 31, 20, 0.2);
-  transform: scale(1.1);
-}
-
-/* ================= RESPONSIVE ================= */
-
-@media (max-width: 768px) {
-  .game-hud {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    padding: 1rem;
+    position: relative;
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
   }
-
+  
+  .game-back-link {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 10;
+    padding: 0.5rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #5c3d2e;
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid #d4c9bc;
+    border-radius: 999px;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(45, 31, 20, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  
+  .game-back-link:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(45, 31, 20, 0.12);
+    border-color: #a88b6a;
+  }
+  
   .game-page-content {
-    padding: 1.5rem 1rem 2rem;
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 2rem;
+    color: #2d1f14;
   }
-
-  .game-portfolio-grid {
-    grid-template-columns: 1fr;
+  
+  .game-page-content h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
   }
-
-  .game-investment-grid {
-    grid-template-columns: 1fr;
+  
+  .game-page-content p {
+    font-size: 1.1rem;
+    opacity: 0.9;
   }
-
+  
+  .game-bottom-icons {
+    position: absolute;
+    bottom: 2rem;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 3rem;
+    padding: 0 1rem;
+  }
+  
+  .game-bottom-icon-wrap {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .game-bottom-icon-wrap--clickable {
+    cursor: pointer;
+  }
+  
+  .game-bottom-icon-wrap::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 140%;
+    height: 140%;
+    background: radial-gradient(
+      circle,
+      rgba(252, 224, 138, 0.6) 0%,
+      rgba(249, 211, 113, 0.35) 35%,
+      rgba(232, 194, 90, 0.15) 55%,
+      transparent 70%
+    );
+    border-radius: 50%;
+    filter: blur(20px);
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  
+  .game-bottom-icon-wrap:hover::after {
+    opacity: 1;
+  }
+  
+  .game-bottom-icon {
+    display: block;
+    position: relative;
+    z-index: 0;
+    height: auto;
+    max-height: 32vh;
+    max-width: 260px;
+    object-fit: contain;
+    transition: transform 0.25s ease;
+  }
+  
+  .game-bottom-icon-wrap:hover .game-bottom-icon {
+    transform: scale(1.08);
+  }
+  
+  .game-cashstash-wrap--clickable {
+    cursor: pointer;
+  }
+  
+  /* ================= MODAL ================= */
+  
+  .game-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    background: rgba(45, 31, 20, 0.4);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+  
   .game-modal {
-    max-width: calc(100vw - 1rem);
-    max-height: 90vh;
+    background: #fffefb;
+    border: 2px solid #e8e0d5;
+    border-radius: 1rem;
+    box-shadow: 0 20px 40px rgba(45, 31, 20, 0.12), 0 4px 12px rgba(45, 31, 20, 0.08);
+    max-width: 600px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Comic Sans MS', 'Chalkboard SE', system-ui, sans-serif;
+    letter-spacing: 0.01em;
   }
-}
+  
+  .game-modal--large {
+    max-width: 800px;
+  }
+  
+  .game-modal--summary {
+    max-width: 650px;
+  }
+  
+  .game-modal-title {
+    margin: 0 0 0.35rem;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #2d1f14;
+    text-align: center;
+    line-height: 1.3;
+    padding: 1.75rem 2rem 0.5rem;
+    flex-shrink: 0;
+  }
+  
+  .game-modal-subtitle {
+    margin: 0 0 1.5rem;
+    font-size: 0.95rem;
+    color: #6b5344;
+    text-align: center;
+    line-height: 1.4;
+    padding: 0 2rem;
+    flex-shrink: 0;
+  }
+  
+  .game-modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    padding: 0 2rem;
+    flex: 1;
+  }
+  
+  .game-modal-label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #3d3229;
+  }
+  
+  .game-modal-input {
+    padding: 0.65rem 0.9rem;
+    font-size: 1rem;
+    font-family: inherit;
+    border: 2px solid #d4c9bc;
+    border-radius: 0.5rem;
+    background: #fff;
+    color: #2d1f14;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .game-modal-input::placeholder {
+    color: #9a8b7a;
+  }
+  
+  .game-modal-input:focus {
+    outline: none;
+    border-color: #8b7355;
+    box-shadow: 0 0 0 3px rgba(139, 115, 90, 0.15);
+  }
+  
+  .game-modal-textarea {
+    resize: vertical;
+    min-height: 4rem;
+  }
+  
+  .game-modal-btn {
+    margin-top: 0.35rem;
+    padding: 0.9rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-family: inherit;
+    color: #2d1f14;
+    background: linear-gradient(180deg, #fce08a 0%, #f9d371 50%, #e8c25a 100%);
+    border: 2px solid #c4a84a;
+    border-radius: 999px;
+    box-shadow: 0 2px 8px rgba(45, 31, 20, 0.1);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    flex-shrink: 0;
+    margin-left: 2rem;
+    margin-right: 2rem;
+  }
+  
+  .game-modal-btn:last-child {
+    margin-bottom: 1.75rem;
+  }
+  
+  .game-modal-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(45, 31, 20, 0.15);
+    border-color: #a88b3a;
+  }
+  
+  .game-modal-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(45, 31, 20, 0.1);
+  }
+  
+  /* ================= INFO MODAL (TFSA etc.) ================= */
+  
+  .game-info-modal-overlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+  
+  .game-info-modal {
+    background: #fffefb;
+    border: 2px solid #e8e0d5;
+    border-radius: 1rem;
+    box-shadow: 0 20px 40px rgba(45, 31, 20, 0.12), 0 4px 12px rgba(45, 31, 20, 0.08);
+    max-width: 480px;
+    width: 100%;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Comic Sans MS', 'Chalkboard SE', system-ui, sans-serif;
+    letter-spacing: 0.01em;
+  }
+  
+  .game-info-modal-header {
+    padding: 1.5rem 1.5rem 1.25rem;
+    text-align: center;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, transparent 100%);
+    border-bottom: 1px solid rgba(45, 31, 20, 0.08);
+  }
+  
+  .game-info-modal-icon {
+    font-size: 2.25rem;
+    display: block;
+    margin-bottom: 0.5rem;
+    line-height: 1;
+  }
+  
+  .game-info-modal-title {
+    margin: 0 0 0.35rem;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #2d1f14;
+    line-height: 1.3;
+  }
+  
+  .game-info-modal-subtitle {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #6b5344;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  
+  .game-info-modal-body {
+    padding: 1.25rem 1.5rem 1rem;
+    overflow-y: auto;
+    flex: 1;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .game-info-modal-desc {
+    margin: 0 0 1rem;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: #3d3229;
+  }
+  
+  .game-info-modal-why {
+    margin: 0 0 1.25rem;
+    padding: 1rem 1.1rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #3d3229;
+    background: rgba(45, 31, 20, 0.04);
+    border-radius: 0.6rem;
+    border-left: 3px solid #22c55e;
+  }
+  
+  .game-info-modal-why strong {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #5c3d2e;
+    letter-spacing: 0.02em;
+  }
+  
+  .game-info-modal-dl {
+    margin: 0 0 1.25rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.4rem 1.5rem;
+    font-size: 0.875rem;
+    color: #3d3229;
+    line-height: 1.45;
+  }
+  
+  .game-info-modal-dl dt {
+    font-weight: 600;
+    color: #5c3d2e;
+  }
+  
+  .game-info-modal-dl dd {
+    margin: 0;
+    font-weight: 500;
+  }
+  
+  .game-info-modal-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #22c55e;
+    text-decoration: none;
+    padding: 0.4rem 0;
+    border-radius: 0.35rem;
+    transition: color 0.2s ease, background 0.2s ease;
+  }
+  
+  .game-info-modal-link:hover {
+    color: #1a9e47;
+    background: rgba(34, 197, 94, 0.08);
+  }
+  
+  .game-info-modal-link--blue {
+    color: #3b82f6;
+  }
+  
+  .game-info-modal-link--blue:hover {
+    color: #2563eb;
+    background: rgba(59, 130, 246, 0.08);
+  }
+  
+  .game-info-modal-link--charity {
+    color: #e11d48;
+  }
+  
+  .game-info-modal-link--charity:hover {
+    color: #be123c;
+    background: rgba(225, 29, 72, 0.08);
+  }
+  
+  .game-charity-donation-label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin: 1.25rem 0 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #3d3229;
+  }
+  
+  .game-charity-donation-input {
+    max-width: 12rem;
+  }
+  
+  .game-info-modal-close {
+    margin: 0 1.5rem 1.25rem;
+    align-self: center;
+    min-width: 8rem;
+  }
+  
+  /* ================= CASHSTASH MODAL (Your cash + ways to use it) ================= */
+  
+  .game-cashstash-modal .game-info-modal-body {
+    padding-top: 0.75rem;
+  }
+  
+  .game-cashstash-modal-header {
+    padding: 1.5rem 1.5rem 1rem;
+    text-align: center;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, transparent 100%);
+    border-bottom: 1px solid rgba(45, 31, 20, 0.08);
+  }
+  
+  .game-cashstash-modal-value {
+    margin: 0.5rem 0 0;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #2d1f14;
+    letter-spacing: 0.02em;
+  }
+  
+  .game-cashstash-modal-subtitle {
+    margin: 0 0 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #5c3d2e;
+    letter-spacing: 0.02em;
+  }
+  
+  .game-cashstash-options {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .game-cashstash-option {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.1rem;
+    background: rgba(45, 31, 20, 0.04);
+    border-radius: 0.6rem;
+    border: 1px solid rgba(45, 31, 20, 0.08);
+    transition: background 0.2s ease, border-color 0.2s ease;
+  }
+  
+  .game-cashstash-option:hover {
+    background: rgba(45, 31, 20, 0.06);
+    border-color: rgba(45, 31, 20, 0.12);
+  }
+  
+  .game-cashstash-option-icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+  }
+  
+  .game-cashstash-option-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.9rem;
+    color: #3d3229;
+    line-height: 1.4;
+  }
+  
+  .game-cashstash-option-text strong {
+    font-size: 1rem;
+    color: #2d1f14;
+  }
+  
+  /* ================= GAME HUD (Profile Info) ================= */
+  
+  .game-hud {
+    position: relative;
+    z-index: 5;
+    background: rgba(255, 254, 251, 0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 2px solid rgba(212, 201, 188, 0.8);
+    padding: 1.25rem 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    box-shadow: 0 2px 12px rgba(45, 31, 20, 0.08);
+  }
+  
+  .game-hud-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  
+  .game-hud-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.95rem;
+  }
+  
+  .game-hud-label {
+    font-weight: 600;
+    color: #5c3d2e;
+    letter-spacing: 0.02em;
+  }
+  
+  .game-hud-value {
+    font-weight: 700;
+    color: #2d1f14;
+    font-size: 1.05rem;
+  }
+  
+  /* ================= GAME PAGE CONTENT ================= */
+  
+  .game-page-content {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    padding: 2rem 1.5rem 3rem;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    overflow-y: auto;
+  }
+  
+  /* ================= CASHSTASH SECTION ================= */
+  
+  .game-cashstash-wrap {
+    position: relative;
+    display: inline-block;
+    align-self: center;
+    transform: none;
+    margin: 1rem 0;
+  }
+  
+  .game-cashstash-wrap--clickable {
+    cursor: pointer;
+  }
+  
+  .game-cashstash-wrap::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 140%;
+    height: 140%;
+    background: radial-gradient(
+      circle,
+      rgba(252, 224, 138, 0.6) 0%,
+      rgba(249, 211, 113, 0.35) 35%,
+      rgba(232, 194, 90, 0.15) 55%,
+      transparent 70%
+    );
+    border-radius: 50%;
+    filter: blur(20px);
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  
+  .game-cashstash-wrap:hover::after {
+    opacity: 1;
+  }
+  
+  .game-cashstash-img {
+    display: block;
+    position: relative;
+    z-index: 0;
+    max-width: 100%;
+    height: auto;
+    max-height: 280px;
+    object-fit: contain;
+    transition: transform 0.25s ease;
+  }
+  
+  .game-cashstash-wrap:hover .game-cashstash-img {
+    transform: scale(1.08);
+  }
+  
+  .game-money-display {
+    position: absolute;
+    left: 50%;
+    top: 58%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    font-size: 50px;
+    font-weight: 800;
+    color: #c41e3a;
+    -webkit-text-stroke: 2px #fff;
+    paint-order: stroke fill;
+    text-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.4),
+      0 1px 2px rgba(255, 255, 255, 0.8);
+    letter-spacing: 0.02em;
+    pointer-events: none;
+  }
+  
+  /* ================= PORTFOLIO SECTION ================= */
+  
+  .game-portfolio-section {
+    background: rgba(255, 254, 251, 0.95);
+    backdrop-filter: blur(8px);
+    border: 2px solid rgba(212, 201, 188, 0.8);
+    border-radius: 1.25rem;
+    padding: 1.75rem;
+    box-shadow: 0 8px 24px rgba(45, 31, 20, 0.08);
+  }
+  
+  .game-portfolio-section h3 {
+    margin: 0 0 1.5rem 0;
+    font-size: 1.35rem;
+    color: #2d1f14;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  
+  .game-portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.25rem;
+  }
+  
+  .game-portfolio-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(245, 245, 242, 0.6) 100%);
+    border: 1px solid rgba(212, 201, 188, 0.6);
+    border-radius: 0.75rem;
+    transition: all 0.2s ease;
+  }
+  
+  .game-portfolio-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(45, 31, 20, 0.1);
+    border-color: rgba(212, 201, 188, 1);
+  }
+  
+  .game-portfolio-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+  }
+  
+  .game-portfolio-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+  }
+  
+  .game-portfolio-text strong {
+    font-size: 0.95rem;
+    color: #2d1f14;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .game-portfolio-text span {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #5c3d2e;
+  }
+  
+  .game-portfolio-empty {
+    color: #6b5344;
+    font-size: 1rem;
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+  
+  /* ================= TAX INFO SECTION ================= */
+  
+  .game-tax-info {
+    background: linear-gradient(135deg, rgba(255, 254, 251, 0.95) 0%, rgba(245, 245, 242, 0.8) 100%);
+    border: 1px solid rgba(212, 201, 188, 0.6);
+    border-radius: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 4px 12px rgba(45, 31, 20, 0.06);
+  }
+  
+  .game-tax-info p {
+    margin: 0.5rem 0;
+    font-size: 0.95rem;
+    color: #3d3229;
+  }
+  
+  .game-tax-info strong {
+    color: #2d1f14;
+  }
+  
+  /* ================= ACTION BUTTONS ================= */
+  
+  .game-action-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 1rem 0;
+  }
+  
+  .game-action-btn {
+    padding: 0.9rem 1.8rem;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: inherit;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(45, 31, 20, 0.1);
+  }
+  
+  .game-action-btn--primary {
+    background: linear-gradient(180deg, #fce08a 0%, #f9d371 50%, #e8c25a 100%);
+    color: #2d1f14;
+    border: 2px solid #c4a84a;
+  }
+  
+  .game-action-btn--primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(45, 31, 20, 0.15);
+  }
+  
+  .game-action-btn--secondary {
+    background: linear-gradient(180deg, rgba(255, 254, 251, 0.9) 0%, rgba(245, 245, 242, 0.8) 100%);
+    color: #2d1f14;
+    border: 2px solid #d4c9bc;
+  }
+  
+  .game-action-btn--secondary:hover {
+    background: linear-gradient(180deg, rgba(255, 254, 251, 1) 0%, rgba(245, 245, 242, 0.95) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(45, 31, 20, 0.1);
+  }
+  
+  /* ================= CHECKPOINTS SECTION ================= */
+  
+  .game-checkpoints-section {
+    background: rgba(255, 254, 251, 0.95);
+    border: 2px solid rgba(212, 201, 188, 0.8);
+    border-radius: 1.25rem;
+    padding: 1.75rem;
+    box-shadow: 0 8px 24px rgba(45, 31, 20, 0.08);
+  }
+  
+  .game-checkpoints-section h4 {
+    margin: 0 0 1.5rem 0;
+    font-size: 1.2rem;
+    color: #2d1f14;
+  }
+  
+  .game-checkpoints-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  
+  .game-checkpoint-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 165, 0, 0.05) 100%);
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    color: #3d3229;
+  }
+  
+  .game-checkpoint-badge span:first-child {
+    font-size: 1.8rem;
+    flex-shrink: 0;
+  }
+  
+  /* ================= INVESTMENT SECTIONS ================= */
+  
+  .game-investment-recommendation {
+    padding: 1.5rem 2rem;
+    background: rgba(248, 247, 245, 0.8);
+    border-top: 1px solid rgba(212, 201, 188, 0.4);
+    border-bottom: 1px solid rgba(212, 201, 188, 0.4);
+    flex-shrink: 0;
+  }
+  
+  .game-investment-recommendation h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+    color: #2d1f14;
+  }
+  
+  .game-allocation-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .game-allocation-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 0.4rem;
+    overflow: hidden;
+    height: 32px;
+  }
+  
+  .game-allocation-bar-fill {
+    height: 100%;
+    transition: width 0.3s ease;
+  }
+  
+  .game-allocation-bar-label {
+    padding: 0 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #3d3229;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  
+  .game-investment-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+    padding: 1.5rem 2rem;
+    flex: 1;
+    overflow-y: auto;
+  }
+  
+  .game-investment-card {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border: 3px solid;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(45, 31, 20, 0.08);
+  }
+  
+  .game-investment-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(45, 31, 20, 0.12);
+  }
+  
+  .game-investment-card-header {
+    padding: 1rem;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  
+  .game-investment-card-icon {
+    font-size: 1.8rem;
+    flex-shrink: 0;
+  }
+  
+  .game-investment-card-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+  
+  .game-investment-card-body {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    flex: 1;
+  }
+  
+  .game-investment-card-desc {
+    margin: 0;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: #3d3229;
+  }
+  
+  .game-investment-card-stats {
+    margin: 0;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+    color: #3d3229;
+  }
+  
+  .game-investment-card-stats dt {
+    font-weight: 600;
+    color: #5c3d2e;
+  }
+  
+  .game-investment-card-stats dd {
+    margin: 0;
+    text-align: right;
+    font-weight: 500;
+  }
+  
+  .game-investment-btn {
+    padding: 0.75rem 1.25rem;
+    background: linear-gradient(180deg, #fce08a 0%, #f9d371 50%, #e8c25a 100%);
+    border: 2px solid #c4a84a;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #2d1f14;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    align-self: stretch;
+    margin-top: auto;
+  }
+  
+  .game-investment-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(196, 168, 74, 0.3);
+  }
+  
+  /* ================= MODAL OVERLAY ================= */
+  
+  .game-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    background: rgba(45, 31, 20, 0.4);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    overflow-y: auto;
+  }
+  
+  .game-modal-overlay--nested {
+    z-index: 25;
+    background: rgba(45, 31, 20, 0.6);
+  }
+  
+  /* ================= SUMMARY STYLES ================= */
+  
+  .game-summary-content {
+    padding: 0 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    flex: 1;
+    overflow-y: auto;
+  }
+  
+  .game-summary-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .game-summary-section h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #2d1f14;
+    font-weight: 700;
+  }
+  
+  .game-summary-section p {
+    margin: 0.35rem 0;
+    font-size: 0.95rem;
+    color: #3d3229;
+  }
+  
+  .game-summary-personality-desc {
+    font-style: italic;
+    color: #6b5344;
+    padding: 0.75rem 1rem;
+    background: rgba(248, 247, 245, 0.6);
+    border-left: 3px solid #f9d371;
+    border-radius: 0.35rem;
+  }
+  
+  .game-summary-tier {
+    background: linear-gradient(135deg, rgba(252, 224, 138, 0.1) 0%, rgba(249, 211, 113, 0.05) 100%);
+    padding: 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(252, 224, 138, 0.3);
+  }
+  
+  .game-summary-feedback-item {
+    padding: 0.75rem 1rem;
+    background: rgba(248, 247, 245, 0.8);
+    border-left: 3px solid #22c55e;
+    border-radius: 0.35rem;
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+  
+  .game-summary-buttons {
+    display: flex;
+    gap: 1rem;
+    padding: 0 2rem 1.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  
+  .game-summary-buttons .game-modal-btn {
+    margin: 0;
+    flex: 1;
+    min-width: 150px;
+  }
+  
+  /* ================= MODAL CLOSE BUTTON ================= */
+  
+  .game-modal-close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 32px;
+    height: 32px;
+    background: rgba(45, 31, 20, 0.1);
+    border: 1px solid rgba(45, 31, 20, 0.2);
+    border-radius: 50%;
+    font-size: 1.5rem;
+    color: #2d1f14;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+  }
+  
+  .game-modal-close-btn:hover {
+    background: rgba(45, 31, 20, 0.2);
+    transform: scale(1.1);
+  }
+  
+  /* ================= RESPONSIVE ================= */
+  
+  @media (max-width: 768px) {
+    .game-hud {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      padding: 1rem;
+    }
+  
+    .game-page-content {
+      padding: 1.5rem 1rem 2rem;
+    }
+  
+    .game-portfolio-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .game-investment-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .game-modal {
+      max-width: calc(100vw - 1rem);
+      max-height: 90vh;
+    }
+  }
+  
