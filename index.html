@@ -1,0 +1,1839 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FinLit — Your Financial Life</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800&display=swap"
+    rel="stylesheet">
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    /* ══════════════════════════════════════════════
+   RESET + VARIABLES
+   ══════════════════════════════════════════════ */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
+
+    :root {
+      --cream: #faf6f0;
+      --warm: #f0e6d6;
+      --tan: #ddd0b8;
+      --brown: #8b6f47;
+      --brown-dark: #5c4a32;
+      --ink: #3b2f1e;
+      --green: #4a8c5c;
+      --green-lt: #6aad7c;
+      --green-dk: #2e6b3e;
+      --sky: #d4eaf7;
+      --sky-dk: #a8d4ec;
+      --gold: #c9943a;
+      --gold-lt: #e2b86a;
+      --red: #b85450;
+      --red-lt: #d67a76;
+      --blue: #4a7fa8;
+      --blue-lt: #7aa8cc;
+      --purple: #6e5a8e;
+      --purple-lt: #9a85bf;
+      --teal: #4a8e8e;
+      --indigo: #5a6595;
+      --px: 'Press Start 2P', monospace;
+      --body: 'Nunito', sans-serif;
+    }
+
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+      background: var(--cream)
+    }
+
+    body {
+      font-family: var(--body);
+      color: var(--ink);
+      user-select: none
+    }
+
+    /* ══════════════════════════════════════════════
+   ONBOARD
+   ══════════════════════════════════════════════ */
+    .ob-wrap {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: linear-gradient(180deg, var(--sky) 0%, var(--sky-dk) 45%, var(--green-lt) 45%, var(--green) 70%, var(--green-dk) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn .35s ease;
+    }
+
+    .ob-card {
+      background: var(--cream);
+      border-radius: 22px;
+      padding: 38px 42px 32px;
+      max-width: 480px;
+      width: 92%;
+      box-shadow: 0 10px 48px rgba(0, 0, 0, .2);
+      position: relative;
+    }
+
+    /* little pixel tree decoration top-right of card */
+    .ob-card::after {
+      content: '🌳';
+      position: absolute;
+      top: -18px;
+      right: 24px;
+      font-size: 40px;
+      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, .15));
+    }
+
+    .ob-title {
+      font-family: var(--px);
+      font-size: 15px;
+      color: var(--brown-dark);
+      text-align: center;
+      margin-bottom: 4px;
+      line-height: 1.7;
+    }
+
+    .ob-sub {
+      font-size: 13px;
+      color: var(--brown);
+      text-align: center;
+      margin-bottom: 26px;
+      line-height: 1.5;
+    }
+
+    .ob-lbl {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .9px;
+      color: var(--brown);
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    .ob-inp {
+      width: 100%;
+      padding: 10px 13px;
+      border-radius: 9px;
+      border: 2px solid var(--tan);
+      background: #fff;
+      font-family: var(--body);
+      font-size: 15px;
+      color: var(--ink);
+      margin-bottom: 16px;
+      outline: none;
+      transition: border .2s;
+    }
+
+    .ob-inp:focus {
+      border-color: var(--green)
+    }
+
+    .ob-inp::placeholder {
+      color: #bbb
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 18px
+    }
+
+    .chip {
+      padding: 6px 13px;
+      border-radius: 18px;
+      border: 2px solid var(--tan);
+      background: #fff;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all .18s;
+      font-weight: 700;
+      color: var(--brown);
+    }
+
+    .chip.on {
+      background: var(--green);
+      border-color: var(--green);
+      color: #fff
+    }
+
+    .ob-btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      background: var(--green);
+      color: #fff;
+      font-family: var(--px);
+      font-size: 10px;
+      cursor: pointer;
+      transition: background .2s, transform .1s;
+      margin-top: 2px;
+      letter-spacing: .5px;
+    }
+
+    .ob-btn:hover {
+      background: var(--green-dk)
+    }
+
+    .ob-btn:active {
+      transform: scale(.97)
+    }
+
+    .ob-hint {
+      font-size: 11px;
+      color: var(--brown);
+      text-align: center;
+      margin-top: 10px;
+      opacity: .7
+    }
+
+    /* ══════════════════════════════════════════════
+   GAME LAYOUT
+   ══════════════════════════════════════════════ */
+    .game {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden
+    }
+
+    /* ── top bar ── */
+    .tbar {
+      background: var(--brown-dark);
+      color: #fff;
+      padding: 7px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tbar-l,
+    .tbar-r {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap
+    }
+
+    .stat {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700
+    }
+
+    .stat .s-lbl {
+      font-size: 9px;
+      font-weight: 600;
+      opacity: .6;
+      text-transform: uppercase;
+      letter-spacing: .6px
+    }
+
+    .tier-badge {
+      font-family: var(--px);
+      font-size: 8px;
+      background: var(--gold);
+      color: var(--ink);
+      padding: 4px 9px;
+      border-radius: 5px;
+      font-weight: 700;
+      letter-spacing: .3px;
+    }
+
+    .btn-end {
+      font-family: var(--px);
+      font-size: 8px;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+      letter-spacing: .3px;
+    }
+
+    .btn-end:hover {
+      background: var(--red-lt)
+    }
+
+    /* ── scene ── */
+    .scene {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+      background: linear-gradient(180deg, var(--sky) 0%, var(--sky-dk) 52%, var(--green-lt) 52%, var(--green) 72%, var(--green-dk) 100%);
+    }
+
+    .sun {
+      position: absolute;
+      top: 10px;
+      right: 36px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fffde6 28%, var(--gold-lt) 55%, var(--gold) 100%);
+      box-shadow: 0 0 28px rgba(201, 147, 58, .45);
+    }
+
+    /* clouds – pure CSS */
+    .cloud {
+      position: absolute;
+      background: #fff;
+      border-radius: 40px;
+      opacity: .88;
+      animation: drift linear infinite
+    }
+
+    .cloud::before,
+    .cloud::after {
+      content: '';
+      position: absolute;
+      background: #fff;
+      border-radius: 50%
+    }
+
+    .cl1 {
+      width: 88px;
+      height: 26px;
+      top: 16px;
+      left: 8%;
+      animation-duration: 55s
+    }
+
+    .cl1::before {
+      width: 38px;
+      height: 38px;
+      top: -17px;
+      left: 14%
+    }
+
+    .cl1::after {
+      width: 28px;
+      height: 28px;
+      top: -11px;
+      left: 54%
+    }
+
+    .cl2 {
+      width: 64px;
+      height: 20px;
+      top: 38px;
+      left: 58%;
+      animation-duration: 42s;
+      animation-delay: -12s
+    }
+
+    .cl2::before {
+      width: 30px;
+      height: 30px;
+      top: -13px;
+      left: 16%
+    }
+
+    .cl2::after {
+      width: 22px;
+      height: 22px;
+      top: -9px;
+      left: 55%
+    }
+
+    @keyframes drift {
+      from {
+        transform: translateX(0)
+      }
+
+      to {
+        transform: translateX(100vw)
+      }
+    }
+
+    /* ── pixel tree (CSS-drawn, scales with wealth) ── */
+    .tree-wrap {
+      position: absolute;
+      bottom: 30%;
+      left: 38%;
+      transform-origin: bottom center;
+      transition: transform .7s cubic-bezier(.34, 1.4, .64, 1);
+    }
+
+    .trunk {
+      width: 18px;
+      margin: 0 auto;
+      background: var(--brown);
+      border-radius: 3px 3px 0 0;
+      transition: height .7s cubic-bezier(.34, 1.4, .64, 1);
+      /* pixel border trick */
+      box-shadow: inset -3px 0 0 rgba(0, 0, 0, .12), inset 3px 0 0 rgba(255, 255, 255, .08);
+    }
+
+    .canopy {
+      position: relative;
+      margin: 0 auto;
+      transition: all .7s cubic-bezier(.34, 1.4, .64, 1)
+    }
+
+    .leaf {
+      position: absolute;
+      border-radius: 50%;
+      transition: all .7s cubic-bezier(.34, 1.4, .64, 1)
+    }
+
+    /* ── house ── */
+    .house {
+      position: absolute;
+      bottom: 29%;
+      right: 14%
+    }
+
+    .h-roof {
+      width: 0;
+      height: 0;
+      border-left: 48px solid transparent;
+      border-right: 48px solid transparent;
+      border-bottom: 34px solid var(--red-lt)
+    }
+
+    .h-body {
+      width: 96px;
+      height: 54px;
+      background: var(--warm);
+      border: 3px solid var(--brown);
+      border-radius: 0 0 3px 3px;
+      position: relative
+    }
+
+    .h-door {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 28px;
+      background: var(--brown-dark);
+      border-radius: 2px 2px 0 0
+    }
+
+    .h-win {
+      position: absolute;
+      top: 10px;
+      width: 16px;
+      height: 16px;
+      background: var(--sky-dk);
+      border: 2px solid var(--brown);
+      border-radius: 2px
+    }
+
+    .h-win1 {
+      left: 10px
+    }
+
+    .h-win2 {
+      right: 10px
+    }
+
+    /* door knob */
+    .h-door::after {
+      content: '';
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--gold);
+      top: 14px;
+      right: 4px
+    }
+
+    /* checkpoint decorations on ground */
+    .deco {
+      position: absolute;
+      bottom: 28%;
+      font-size: 18px;
+      animation: bob 2.5s ease-in-out infinite;
+      filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .2))
+    }
+
+    @keyframes bob {
+
+      0%,
+      100% {
+        transform: translateY(0)
+      }
+
+      50% {
+        transform: translateY(-4px)
+      }
+    }
+
+    /* ── asset strip ── */
+    .astrip {
+      background: var(--warm);
+      border-top: 3px solid var(--tan);
+      padding: 9px 14px;
+      display: flex;
+      gap: 9px;
+      align-items: center;
+      flex-shrink: 0;
+      overflow-x: auto;
+    }
+
+    .astrip::-webkit-scrollbar {
+      height: 4px
+    }
+
+    .astrip::-webkit-scrollbar-track {
+      background: transparent
+    }
+
+    .astrip::-webkit-scrollbar-thumb {
+      background: var(--tan);
+      border-radius: 2px
+    }
+
+    .atile {
+      flex-shrink: 0;
+      width: 84px;
+      background: #fff;
+      border-radius: 11px;
+      border: 2px solid var(--tan);
+      padding: 9px 6px;
+      text-align: center;
+      cursor: pointer;
+      transition: all .18s;
+      position: relative;
+    }
+
+    .atile:hover {
+      border-color: var(--green);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, .1)
+    }
+
+    .atile.on {
+      border-color: var(--green);
+      background: #f2faf5
+    }
+
+    .atile .t-ic {
+      font-size: 22px;
+      display: block;
+      margin-bottom: 3px
+    }
+
+    .atile .t-nm {
+      font-size: 9px;
+      font-weight: 800;
+      color: var(--ink);
+      margin-bottom: 2px;
+      letter-spacing: .2px
+    }
+
+    .atile .t-bal {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--green)
+    }
+
+    .atile .t-bal.z {
+      color: var(--brown);
+      opacity: .5
+    }
+
+    /* cash tile */
+    .cash-tile {
+      flex-shrink: 0;
+      width: 84px;
+      background: var(--green);
+      border-radius: 11px;
+      padding: 9px 6px;
+      text-align: center;
+      color: #fff;
+    }
+
+    .cash-tile .t-ic {
+      font-size: 22px;
+      display: block;
+      margin-bottom: 3px
+    }
+
+    .cash-tile .t-nm {
+      font-size: 9px;
+      font-weight: 800;
+      margin-bottom: 2px
+    }
+
+    .cash-tile .t-bal {
+      font-size: 10px;
+      font-weight: 700
+    }
+
+    /* ── action bar ── */
+    .abar {
+      background: var(--brown-dark);
+      padding: 9px 14px;
+      display: flex;
+      gap: 7px;
+      align-items: center;
+      flex-shrink: 0;
+      flex-wrap: wrap;
+    }
+
+    .abtn {
+      padding: 7px 14px;
+      border: none;
+      border-radius: 7px;
+      font-family: var(--px);
+      font-size: 8px;
+      cursor: pointer;
+      transition: all .14s;
+      color: #fff;
+      letter-spacing: .3px;
+    }
+
+    .abtn.adv {
+      background: var(--gold);
+      color: var(--ink)
+    }
+
+    .abtn.adv:hover {
+      background: var(--gold-lt)
+    }
+
+    .abtn.evt {
+      background: var(--purple)
+    }
+
+    .abtn.evt:hover {
+      background: var(--purple-lt)
+    }
+
+    .abtn:active {
+      transform: scale(.95)
+    }
+
+    .abar-sp {
+      flex: 1
+    }
+
+    .abar-yr {
+      font-family: var(--px);
+      font-size: 9px;
+      color: #fff;
+      opacity: .7
+    }
+
+    /* ══════════════════════════════════════════════
+   MODALS
+   ══════════════════════════════════════════════ */
+    .ov {
+      position: fixed;
+      inset: 0;
+      background: rgba(59, 47, 30, .52);
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn .2s ease;
+    }
+
+    .mod {
+      background: var(--cream);
+      border-radius: 18px;
+      max-width: 500px;
+      width: 92%;
+      max-height: 86vh;
+      overflow-y: auto;
+      box-shadow: 0 14px 52px rgba(0, 0, 0, .24);
+      animation: slideUp .22s ease;
+    }
+
+    .mod-h {
+      padding: 22px 26px 14px;
+      border-bottom: 2px solid var(--tan);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .mod-h h2 {
+      font-size: 17px;
+      color: var(--brown-dark);
+      font-weight: 800
+    }
+
+    .mod-x {
+      background: none;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      color: var(--brown);
+      padding: 1px 5px;
+      border-radius: 5px;
+      line-height: 1;
+    }
+
+    .mod-x:hover {
+      background: var(--tan)
+    }
+
+    .mod-b {
+      padding: 18px 26px 22px
+    }
+
+    /* fund detail */
+    .fd-rows {
+      margin: 14px 0
+    }
+
+    .fd-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 7px 0;
+      border-bottom: 1px solid var(--tan);
+      font-size: 12px
+    }
+
+    .fd-row:last-child {
+      border: none
+    }
+
+    .fd-row .l {
+      color: var(--brown);
+      font-weight: 600
+    }
+
+    .fd-row .v {
+      font-weight: 700;
+      color: var(--ink)
+    }
+
+    .fd-desc {
+      font-size: 13px;
+      color: var(--ink);
+      line-height: 1.6;
+      margin: 14px 0
+    }
+
+    .fd-why {
+      background: var(--warm);
+      border-radius: 9px;
+      padding: 13px 15px;
+      font-size: 12px;
+      line-height: 1.55;
+      margin-bottom: 14px
+    }
+
+    .fd-why strong {
+      color: var(--brown-dark)
+    }
+
+    .fd-link {
+      font-size: 11px;
+      color: var(--blue);
+      text-decoration: none;
+      font-weight: 700
+    }
+
+    .fd-link:hover {
+      text-decoration: underline
+    }
+
+    /* invest row */
+    .inv-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      align-items: flex-end
+    }
+
+    .inv-row input {
+      flex: 1;
+      padding: 9px 11px 9px 24px;
+      border-radius: 7px;
+      border: 2px solid var(--tan);
+      font-size: 14px;
+      font-family: var(--body);
+      outline: none;
+    }
+
+    .inv-row input:focus {
+      border-color: var(--green)
+    }
+
+    .inv-$ {
+      position: relative;
+      flex: 1
+    }
+
+    .inv-$ span {
+      position: absolute;
+      left: 9px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #aaa;
+      font-weight: 700;
+      font-size: 13px
+    }
+
+    .inv-btn {
+      padding: 9px 18px;
+      background: var(--green);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      font-family: var(--px);
+      font-size: 9px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .inv-btn:hover {
+      background: var(--green-dk)
+    }
+
+    .inv-warn {
+      font-size: 10px;
+      color: var(--red);
+      margin-top: 6px;
+      font-weight: 700;
+      display: none
+    }
+
+    .inv-warn.show {
+      display: block
+    }
+
+    /* event modal */
+    .ev-emoji {
+      font-size: 52px;
+      text-align: center;
+      margin-bottom: 6px
+    }
+
+    .ev-cat {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .7px;
+      padding: 3px 9px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    .ev-cat.emergency {
+      background: #fde8e8;
+      color: var(--red)
+    }
+
+    .ev-cat.market {
+      background: #e6eef6;
+      color: var(--blue)
+    }
+
+    .ev-cat.windfall {
+      background: #e6f5ec;
+      color: var(--green-dk)
+    }
+
+    .ev-cat.social,
+    .ev-cat.lifestyle {
+      background: #efe6f5;
+      color: var(--purple)
+    }
+
+    .ev-desc {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--ink);
+      margin-bottom: 18px
+    }
+
+    .ev-cost {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--warm);
+      border-radius: 9px;
+      padding: 11px 14px;
+      margin-bottom: 14px;
+    }
+
+    .ev-cost .l {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--brown)
+    }
+
+    .ev-cost .v {
+      font-size: 17px;
+      font-weight: 800
+    }
+
+    .ev-cost .v.loss {
+      color: var(--red)
+    }
+
+    .ev-cost .v.gain {
+      color: var(--green)
+    }
+
+    .ev-btn {
+      width: 100%;
+      padding: 11px;
+      background: var(--brown-dark);
+      color: #fff;
+      border: none;
+      border-radius: 9px;
+      font-family: var(--px);
+      font-size: 9px;
+      cursor: pointer;
+    }
+
+    .ev-btn:hover {
+      background: var(--brown)
+    }
+
+    /* events picker list */
+    .ev-list {
+      display: flex;
+      flex-direction: column;
+      gap: 7px
+    }
+
+    .ev-pick {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 9px 13px;
+      background: #fff;
+      border-radius: 9px;
+      border: 2px solid var(--tan);
+      cursor: pointer;
+      transition: border .14s;
+    }
+
+    .ev-pick:hover {
+      border-color: var(--green)
+    }
+
+    .ev-pick .ep-ic {
+      font-size: 22px;
+      flex-shrink: 0
+    }
+
+    .ev-pick .ep-info {
+      flex: 1;
+      min-width: 0
+    }
+
+    .ev-pick .ep-t {
+      font-weight: 800;
+      font-size: 12px
+    }
+
+    .ev-pick .ep-d {
+      font-size: 10px;
+      color: var(--brown);
+      margin-top: 1px
+    }
+
+    .ev-pick .ep-cost {
+      font-weight: 800;
+      font-size: 12px;
+      flex-shrink: 0
+    }
+
+    .ep-cost.loss {
+      color: var(--red)
+    }
+
+    .ep-cost.gain {
+      color: var(--green)
+    }
+
+    .ep-cost.neutral {
+      color: var(--blue)
+    }
+
+    /* summary */
+    .sum-nw {
+      text-align: center;
+      margin-bottom: 18px
+    }
+
+    .sum-nw .nw-v {
+      font-family: var(--px);
+      font-size: 20px;
+      color: var(--green-dk)
+    }
+
+    .sum-nw .nw-l {
+      font-size: 10px;
+      color: var(--brown);
+      margin-top: 3px
+    }
+
+    .sum-pers {
+      background: var(--warm);
+      border-radius: 11px;
+      padding: 15px;
+      margin-bottom: 16px;
+      text-align: center
+    }
+
+    .sum-pers .p-nm {
+      font-family: var(--px);
+      font-size: 11px;
+      color: var(--brown-dark);
+      margin-bottom: 5px
+    }
+
+    .sum-pers .p-ds {
+      font-size: 12px;
+      color: var(--brown);
+      line-height: 1.5
+    }
+
+    .lit-wrap {
+      margin-bottom: 16px
+    }
+
+    .lit-wrap .l-hd {
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 5px;
+      display: flex;
+      justify-content: space-between
+    }
+
+    .lit-bar {
+      height: 13px;
+      background: var(--tan);
+      border-radius: 6px;
+      overflow: hidden
+    }
+
+    .lit-fill {
+      height: 100%;
+      border-radius: 6px;
+      background: linear-gradient(90deg, var(--green), var(--gold));
+      transition: width .8s ease
+    }
+
+    .sum-fb {
+      list-style: none;
+      padding: 0
+    }
+
+    .sum-fb li {
+      font-size: 12px;
+      line-height: 1.6;
+      padding: 7px 0;
+      border-bottom: 1px solid var(--tan)
+    }
+
+    .sum-fb li:last-child {
+      border: none
+    }
+
+    .sum-tier {
+      text-align: center;
+      margin-top: 18px;
+      padding: 15px;
+      background: linear-gradient(135deg, var(--gold-lt), var(--gold));
+      border-radius: 11px;
+    }
+
+    .sum-tier .st-em {
+      font-size: 32px
+    }
+
+    .sum-tier .st-nm {
+      font-family: var(--px);
+      font-size: 11px;
+      color: var(--ink);
+      margin-top: 3px
+    }
+
+    .sum-tier .st-pt {
+      font-size: 11px;
+      color: var(--brown-dark);
+      margin-top: 2px;
+      font-weight: 700
+    }
+
+    /* checkpoint toast */
+    .cp-toast {
+      position: fixed;
+      bottom: 68px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--gold);
+      color: var(--ink);
+      border-radius: 10px;
+      padding: 10px 22px;
+      font-size: 12px;
+      font-weight: 800;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, .18);
+      z-index: 60;
+      transition: transform .38s cubic-bezier(.34, 1.56, .64, 1);
+      white-space: nowrap;
+    }
+
+    .cp-toast.show {
+      transform: translateX(-50%) translateY(0)
+    }
+
+    /* ══════════════════════════════════════════════
+   UTIL
+   ══════════════════════════════════════════════ */
+    @keyframes fadeIn {
+      from {
+        opacity: 0
+      }
+
+      to {
+        opacity: 1
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    /* ── formatting ── */
+    const fmt = n => '$' + Number(n).toLocaleString('en-CA', { maximumFractionDigits: 0 });
+    const fmtD = n => '$' + Number(n).toLocaleString('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    const GOALS = [
+      { id: 'home', label: '🏠 Buy a Home' },
+      { id: 'travel', label: '✈️ Travel' },
+      { id: 'retire', label: '🏖️ Early Retirement' },
+      { id: 'car', label: '🚗 Buy a Car' },
+      { id: 'stability', label: '🛡️ Stability' },
+    ];
+
+    const CP_DEFS = [
+      { id: 'open_tfsa', title: 'Opened a TFSA', points: 100, emoji: '🛡️' },
+      { id: 'open_rrsp', title: 'Opened an RRSP', points: 100, emoji: '🏖️' },
+      { id: 'open_fhsa', title: 'Opened an FHSA', points: 100, emoji: '🏠' },
+      { id: 'first_etf', title: 'Bought first ETF', points: 150, emoji: '📈' },
+      { id: 'first_stock', title: 'Bought first Stock', points: 150, emoji: '🚀' },
+      { id: 'emergency_fund', title: '3-month emergency fund', points: 200, emoji: '🏦' },
+      { id: 'survived_crash', title: 'Survived a market crash', points: 250, emoji: '💪' },
+      { id: 'net_worth_10k', title: 'Net worth $10k', points: 200, emoji: '💰' },
+      { id: 'net_worth_50k', title: 'Net worth $50k', points: 300, emoji: '💎' },
+      { id: 'diversified', title: 'Invested in 3+ types', points: 200, emoji: '🎯' },
+    ];
+
+    const TIERS = [
+      { name: 'Surviving', min: 0, emoji: '🌱' },
+      { name: 'Budget Builder', min: 200, emoji: '🧱' },
+      { name: 'Saver', min: 500, emoji: '🏦' },
+      { name: 'Investor', min: 800, emoji: '📈' },
+      { name: 'Wealth Grower', min: 1200, emoji: '🌳' },
+      { name: 'Financial Architect', min: 1800, emoji: '🏛️' },
+    ];
+
+    const EVENTS_STATIC = [
+      { id: 'car_repair', title: 'Car Repair', description: 'Your car broke down. Repair: $2,800.', cost: 2800, category: 'emergency', emoji: '🚗' },
+      { id: 'medical_bill', title: 'Medical Bill', description: 'Unexpected dental visit. Bill: $1,200.', cost: 1200, category: 'emergency', emoji: '🏥' },
+      { id: 'market_crash', title: 'Market Crash', description: 'Stock market dropped 30%. Stocks & ETFs plummet.', cost: 0, category: 'market', emoji: '📉', market_effect: -0.30 },
+      { id: 'job_loss', title: 'Job Loss', description: 'Lost your job. Need $5,000 from savings for 3 months.', cost: 5000, category: 'emergency', emoji: '💼' },
+      { id: 'bonus', title: 'Year-End Bonus', description: 'Great year at work! $3,000 bonus.', cost: -3000, category: 'windfall', emoji: '🎉' },
+      { id: 'inheritance', title: 'Inheritance', description: 'A relative left you $5,000.', cost: -5000, category: 'windfall', emoji: '💌' },
+      { id: 'wedding', title: "Friend's Wedding", description: 'Flights + outfit: $1,500.', cost: 1500, category: 'social', emoji: '💒' },
+      { id: 'vacation', title: 'Family Vacation', description: 'A trip you can\'t say no to: $2,200.', cost: 2200, category: 'lifestyle', emoji: '✈️' },
+      { id: 'market_boom', title: 'Market Boom', description: 'Bull market! Stocks & ETFs surge 25%.', cost: 0, category: 'market', emoji: '📈', market_effect: 0.25 },
+      { id: 'freelance_gig', title: 'Freelance Gig', description: 'Side project paid you $1,800.', cost: -1800, category: 'windfall', emoji: '💻' },
+    ];
+
+    /* deco positions for checkpoints (placed around the scene) */
+    const DECO_POS = [
+      { left: '12%' }, { left: '22%' }, { left: '52%' }, { left: '62%' }, { left: '72%' },
+      { left: '18%' }, { left: '45%' }, { left: '58%' }, { left: '80%' }, { left: '35%' },
+    ];
+
+    // ═══════════════════════════════════════════════════
+    // APP
+    // ═══════════════════════════════════════════════════
+    function App() {
+      const [phase, setPhase] = useState('onboard'); // onboard | game | summary
+      const [obName, setObName] = useState('');
+      const [obAge, setObAge] = useState('');
+      const [obIncome, setObIncome] = useState('');
+      const [obGoals, setObGoals] = useState([]);
+
+      const [profile, setProfile] = useState(null);
+      const [funds, setFunds] = useState({});
+      const [portfolio, setPortfolio] = useState({});
+      const [cash, setCash] = useState(0);
+      const [age, setAge] = useState(25);
+      const [year, setYear] = useState(2025);
+      const [netWorth, setNetWorth] = useState(0);
+      const [earnedCps, setEarnedCps] = useState([]);
+      const [totalPts, setTotalPts] = useState(0);
+      const [history, setHistory] = useState([]);
+      const [socialScore, setSocialScore] = useState(0);
+      const [donationAmt, setDonationAmt] = useState('');
+      const [donationMsg, setDonationMsg] = useState(null);
+
+      const [modal, setModal] = useState(null);
+      const [cpToast, setCpToast] = useState(null);
+      const [summaryData, setSummaryData] = useState(null);
+      const [busy, setBusy] = useState(false);
+
+      /* load funds once */
+      useEffect(() => {
+        fetch('/api/funds').then(r => r.json()).then(d => setFunds(d)).catch(() => { });
+      }, []);
+
+      /* ── onboard submit ── */
+      const submitOb = async () => {
+        if (!obName || !obAge || !obIncome) return;
+        setBusy(true);
+        try {
+          const r = await fetch('/api/profile', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ age: +obAge, income: +obIncome, goals: obGoals })
+          });
+          const d = await r.json();
+          setProfile({ name: obName, ...d });
+          setAge(+obAge);
+          setCash(d.monthly_invest_recommended * 12);
+          setPhase('game');
+        } catch (e) { console.error(e) }
+        setBusy(false);
+      };
+
+      /* ── invest ── */
+      const invest = (key, amt) => {
+        if (amt <= 0 || amt > cash) return;
+        setCash(c => c - amt);
+        setPortfolio(p => ({ ...p, [key]: (p[key] || 0) + amt }));
+        setModal(null);
+      };
+
+      /* ── advance year (preview for event confirmation) ── */
+      const previewAdvance = async () => {
+        if (!profile) return;
+        setBusy(true);
+        try {
+          const r = await fetch('/api/simulate-year', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              portfolio, cash, age, income: profile.income, year,
+              monthly_contribution: profile.monthly_invest_recommended, preview: true
+            })
+          });
+          const d = await r.json();
+          // If there's an event, show confirmation; otherwise accept year
+          if (d.event) {
+            setModal({ type: 'confirm-random-event', event: d.event });
+          } else {
+            setPortfolio(d.portfolio);
+            setCash(d.cash);
+            setAge(d.age);
+            setYear(d.year);
+            setNetWorth(d.net_worth);
+            const newCps = (d.earned_checkpoints || []).filter(c => !earnedCps.includes(c));
+            if (newCps.length) {
+              setEarnedCps(prev => [...prev, ...newCps]);
+              let pts = 0;
+              newCps.forEach(id => { const cp = CP_DEFS.find(c => c.id === id); if (cp) pts += cp.points });
+              setTotalPts(t => t + pts);
+              const first = CP_DEFS.find(c => c.id === newCps[0]);
+              if (first) { setCpToast(first.emoji + ' ' + first.title); setTimeout(() => setCpToast(null), 3000) }
+            }
+          }
+        } catch (e) { console.error(e) }
+        setBusy(false);
+      };
+
+      const acceptEventAdvance = async (eventId) => {
+        setModal(null);
+        setBusy(true);
+        try {
+          const r = await fetch('/api/simulate-year', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              portfolio, cash, age, income: profile.income, year,
+              monthly_contribution: profile.monthly_invest_recommended, trigger_event: eventId
+            })
+          });
+          const d = await r.json();
+          setPortfolio(d.portfolio);
+          setCash(d.cash);
+          setAge(d.age);
+          setYear(d.year);
+          setNetWorth(d.net_worth);
+          const newCps = (d.earned_checkpoints || []).filter(c => !earnedCps.includes(c));
+          if (newCps.length) {
+            setEarnedCps(prev => [...prev, ...newCps]);
+            let pts = 0;
+            newCps.forEach(id => { const cp = CP_DEFS.find(c => c.id === id); if (cp) pts += cp.points });
+            setTotalPts(t => t + pts);
+            const first = CP_DEFS.find(c => c.id === newCps[0]);
+            if (first) { setCpToast(first.emoji + ' ' + first.title); setTimeout(() => setCpToast(null), 3000) }
+          }
+          if (d.event) {
+            setHistory(h => [...h, d.event]);
+            setModal({ type: 'event', event: d.event });
+          }
+        } catch (e) { console.error(e) }
+        setBusy(false);
+      };
+
+      const rejectEventAdvance = async () => {
+        setModal(null);
+        setBusy(true);
+        try {
+          const r = await fetch('/api/simulate-year', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              portfolio, cash, age, income: profile.income, year,
+              monthly_contribution: profile.monthly_invest_recommended, force_no_event: true
+            })
+          });
+          const d = await r.json();
+          setPortfolio(d.portfolio);
+          setCash(d.cash);
+          setAge(d.age);
+          setYear(d.year);
+          setNetWorth(d.net_worth);
+          const newCps = (d.earned_checkpoints || []).filter(c => !earnedCps.includes(c));
+          if (newCps.length) {
+            setEarnedCps(prev => [...prev, ...newCps]);
+            let pts = 0;
+            newCps.forEach(id => { const cp = CP_DEFS.find(c => c.id === id); if (cp) pts += cp.points });
+            setTotalPts(t => t + pts);
+            const first = CP_DEFS.find(c => c.id === newCps[0]);
+            if (first) { setCpToast(first.emoji + ' ' + first.title); setTimeout(() => setCpToast(null), 3000) }
+          }
+        } catch (e) { console.error(e) }
+        setBusy(false);
+      };
+
+      /* ── advance year (direct, no preview) ── */
+      const advance = async (triggerEvent = null) => {
+        setBusy(true);
+        try {
+          const r = await fetch('/api/simulate-year', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              portfolio, cash, age, income: profile.income, year,
+              monthly_contribution: profile.monthly_invest_recommended, trigger_event: triggerEvent
+            })
+          });
+          const d = await r.json();
+          setPortfolio(d.portfolio);
+          setCash(d.cash);
+          setAge(d.age);
+          setYear(d.year);
+          setNetWorth(d.net_worth);
+
+          /* checkpoints */
+          const newCps = (d.earned_checkpoints || []).filter(c => !earnedCps.includes(c));
+          if (newCps.length) {
+            setEarnedCps(prev => [...prev, ...newCps]);
+            let pts = 0;
+            newCps.forEach(id => { const cp = CP_DEFS.find(c => c.id === id); if (cp) pts += cp.points });
+            setTotalPts(t => t + pts);
+            const first = CP_DEFS.find(c => c.id === newCps[0]);
+            if (first) { setCpToast(first.emoji + ' ' + first.title); setTimeout(() => setCpToast(null), 3000) }
+          }
+
+          /* event popup */
+          if (d.event) {
+            setHistory(h => [...h, d.event]);
+            setModal({ type: 'event', event: d.event });
+          }
+        } catch (e) { console.error(e) }
+        setBusy(false);
+      };
+
+      /* ── donate ── */
+      const donate = async () => {
+        const amt = parseFloat(donationAmt) || 0;
+        if (!profile) return;
+        if (amt <= 0) return alert('Enter a donation amount');
+        if (amt > cash) return alert('Not enough cash to donate');
+        setBusy(true);
+        try {
+          const r = await fetch('/api/donate', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: amt, income: profile.income, cash })
+          });
+          const d = await r.json();
+          if (!r.ok) { alert(d.error || 'Donation failed'); setBusy(false); return; }
+          setCash(d.cash_after);
+          setSocialScore(s => s + (d.social_points || 0));
+          setDonationAmt('');
+          setDonationMsg(`Donation ${fmt(d.donation)} recorded. Tax credit: ${fmtD(d.tax_credit.total_credit)} (fed ${fmtD(d.tax_credit.federal_credit)}, prov ${fmtD(d.tax_credit.provincial_credit)})`);
+          setCpToast('💖 Donated'); setTimeout(() => setCpToast(null), 2000);
+        } catch (e) { console.error(e); alert('Donation failed') }
+        setBusy(false);
+      };
+
+      /* ── end game ── */
+      const endGame = async () => {
+        setBusy(true);
+        try {
+          const r = await fetch('/api/summary', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              starting_age: +obAge, ending_age: age, starting_income: profile.income,
+              final_portfolio: portfolio, final_cash: cash, events_faced: history,
+              checkpoints_earned: earnedCps, total_points: totalPts
+            })
+          });
+          const d = await r.json();
+          setSummaryData(d);
+          setPhase('summary');
+        } catch (e) { console.error(e) }
+        setBusy(false);
+      };
+
+      /* ── reset ── */
+      const reset = () => {
+        setPhase('onboard'); setSummaryData(null); setProfile(null);
+        setPortfolio({}); setCash(0); setEarnedCps([]); setTotalPts(0); setHistory([]);
+        setSocialScore(0); setDonationAmt(''); setDonationMsg(null);
+      };
+
+      /* ── tier ── */
+      const curTier = TIERS.reduce((b, t) => totalPts >= t.min ? t : b, TIERS[0]);
+
+      /* ── tree sizing (scales 1× → 2.4× over 40 years) ── */
+      const startAge = +obAge || 25;
+      const yearsIn = Math.max(0, age - startAge);
+      const tScale = Math.min(1 + (netWorth / 100000) * 1.4, 2.4);
+      const trunkH = 18 + yearsIn * 2.8;
+      const canH = 36 + yearsIn * 2.2;
+
+      /* ═══════════════════════════════════════════
+         RENDER
+         ═══════════════════════════════════════════ */
+
+      /* ── ONBOARD ── */
+      if (phase === 'onboard') {
+        return (
+          <div className="ob-wrap">
+            <div className="ob-card">
+              <div className="ob-title">💰 FinLit</div>
+              <div className="ob-sub">Simulate your financial future.<br />Make smart choices. Watch your tree grow.</div>
+              <label className="ob-lbl">Your Name</label>
+              <input className="ob-inp" placeholder="e.g. Alex" value={obName} onChange={e => setObName(e.target.value)} />
+              <label className="ob-lbl">Current Age</label>
+              <input className="ob-inp" type="number" placeholder="e.g. 25" value={obAge} onChange={e => setObAge(e.target.value)} />
+              <label className="ob-lbl">Annual Income (CAD)</label>
+              <input className="ob-inp" type="number" placeholder="e.g. 65000" value={obIncome} onChange={e => setObIncome(e.target.value)} />
+              <label className="ob-lbl">Financial Goals</label>
+              <div className="chips">
+                {GOALS.map(g => (
+                  <div key={g.id} className={`chip ${obGoals.includes(g.id) ? 'on' : ''}`}
+                    onClick={() => setObGoals(gs => gs.includes(g.id) ? gs.filter(x => x !== g.id) : [...gs, g.id])}>
+                    {g.label}
+                  </div>
+                ))}
+              </div>
+              <button className="ob-btn" onClick={submitOb} disabled={busy}>{busy ? '...' : 'Start My Journey →'}</button>
+              <div className="ob-hint">Your tree grows as your wealth grows 🌱</div>
+            </div>
+          </div>
+        );
+      }
+
+      /* ── SUMMARY ── */
+      if (phase === 'summary' && summaryData) {
+        return (
+          <div className="ov" style={{ background: 'rgba(59,47,30,.72)' }}>
+            <div className="mod" style={{ maxWidth: 540 }}>
+              <div className="mod-h"><h2>📊 Your Financial Journey</h2></div>
+              <div className="mod-b">
+                <div className="sum-nw">
+                  <div className="nw-v">{fmt(summaryData.net_worth)}</div>
+                  <div className="nw-l">{summaryData.years_played} years · {summaryData.events_faced_count} life events</div>
+                </div>
+                <div className="sum-pers">
+                  <div className="p-nm">{summaryData.personality}</div>
+                  <div className="p-ds">{summaryData.personality_desc}</div>
+                </div>
+                <div className="lit-wrap">
+                  <div className="l-hd"><span>Financial Literacy</span><span>{summaryData.literacy_score}/100</span></div>
+                  <div className="lit-bar"><div className="lit-fill" style={{ width: summaryData.literacy_score + '%' }}></div></div>
+                </div>
+                <ul className="sum-fb">
+                  {summaryData.feedback.map((f, i) => <li key={i}>{f}</li>)}
+                </ul>
+                <div className="sum-tier">
+                  <div className="st-em">{summaryData.tier.emoji}</div>
+                  <div className="st-nm">{summaryData.tier.name}</div>
+                  <div className="st-pt">{summaryData.total_points} points</div>
+                </div>
+                <button className="ob-btn" style={{ marginTop: 18 }} onClick={reset}>Play Again →</button>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      /* ── GAME ── */
+      const fKeys = Object.keys(funds);
+
+      return (
+        <div className="game">
+          {/* TOP BAR */}
+          <div className="tbar">
+            <div className="tbar-l">
+              <div className="stat">{profile?.name || 'You'}</div>
+              <div className="stat"><span className="s-lbl">Age</span>{age}</div>
+              <div className="stat"><span className="s-lbl">Worth</span>{fmt(netWorth)}</div>
+              <div className="stat"><span className="s-lbl">Pts</span>{totalPts}</div>
+              <div className="stat"><span className="s-lbl">Good</span>💖 {socialScore}</div>
+            </div>
+            <div className="tbar-r">
+              <div className="tier-badge" onClick={() => setModal({ type: 'tiers' })} style={{ cursor: 'pointer' }}>{curTier.emoji} {curTier.name}</div>
+              <button className="btn-end" onClick={endGame} disabled={busy}>End Game</button>
+            </div>
+          </div>
+
+          {/* SCENE */}
+          <div className="scene">
+            <div className="sun"></div>
+            <div className="cloud cl1"></div>
+            <div className="cloud cl2"></div>
+
+            {/* tree */}
+            <div className="tree-wrap" style={{ transform: `scale(${tScale})` }}>
+              <div className="canopy" style={{ width: canH, height: canH, position: 'relative' }}>
+                <div className="leaf" style={{ width: '68%', height: '68%', top: '8%', left: '16%', background: 'var(--green)' }}></div>
+                <div className="leaf" style={{ width: '48%', height: '48%', top: '2%', left: '2%', background: 'var(--green-lt)' }}></div>
+                <div className="leaf" style={{ width: '44%', height: '44%', top: '6%', right: '2%', background: 'var(--green-dk)' }}></div>
+                <div className="leaf" style={{ width: '32%', height: '32%', top: '38%', left: '34%', background: 'var(--green-lt)' }}></div>
+              </div>
+              <div className="trunk" style={{ height: trunkH }}></div>
+            </div>
+
+
+          </div>
+
+          {/* ASSET STRIP */}
+          <div className="astrip">
+            <div className="cash-tile" onClick={() => setModal({ type: 'cash' })} style={{ cursor: 'pointer' }}>
+              <span className="t-ic">💵</span>
+              <div className="t-nm">Cash</div>
+              <div className="t-bal">{fmt(cash)}</div>
+            </div>
+            {fKeys.map(key => {
+              const f = funds[key]; const bal = portfolio[key] || 0;
+              return (
+                <div key={key} className={`atile ${bal > 0 ? 'on' : ''}`} onClick={() => setModal({ type: 'fund', key })}>
+                  <span className="t-ic">{f.icon}</span>
+                  <div className="t-nm">{f.name}</div>
+                  <div className={`t-bal ${bal === 0 ? 'z' : ''}`}>{bal > 0 ? fmt(bal) : '$0'}</div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* ACTION BAR */}
+          <div className="abar">
+            <button className="abtn adv" onClick={() => previewAdvance()} disabled={busy}>{busy ? '...' : '⏩ Advance Year'}</button>
+            <button className="abtn evt" onClick={() => setModal({ type: 'events' })} disabled={busy}>🎲 Life Events</button>
+            <div className="abar-sp"></div>
+            <div className="abar-yr">Year {year} · Age {age}</div>
+          </div>
+
+          {/* CHECKPOINT TOAST */}
+          <div className={`cp-toast ${cpToast ? 'show' : ''}`}>🏆 {cpToast}</div>
+
+          {/* ═════════ MODALS ═════════ */}
+
+          {/* FUND DETAIL */}
+          {modal && modal.type === 'fund' && funds[modal.key] && (() => {
+            const f = funds[modal.key]; const bal = portfolio[modal.key] || 0;
+            return (
+              <div className="ov" onClick={() => setModal(null)}>
+                <div className="mod" onClick={e => e.stopPropagation()}>
+                  <div className="mod-h">
+                    <h2 style={{ color: f.color }}>{f.icon} {f.name}</h2>
+                    <button className="mod-x" onClick={() => setModal(null)}>✕</button>
+                  </div>
+                  <div className="mod-b">
+                    <div style={{ fontWeight: 800, fontSize: 14, color: f.color, marginBottom: 2 }}>{f.full_name}</div>
+                    <div className="fd-rows">
+                      <div className="fd-row"><span className="l">Your Balance</span><span className="v" style={{ color: f.color }}>{fmtD(bal)}</span></div>
+                      <div className="fd-row"><span className="l">Est. Annual Return</span><span className="v">{(f.annual_return * 100).toFixed(1)}%</span></div>
+                      <div className="fd-row"><span className="l">Risk Level</span><span className="v">{f.risk}</span></div>
+                      <div className="fd-row"><span className="l">Best For Ages</span><span className="v">{f.best_for_ages}</span></div>
+                      {f.contribution_limit_2024 && <div className="fd-row"><span className="l">2024 Limit</span><span className="v">{fmt(f.contribution_limit_2024)}/yr</span></div>}
+                    </div>
+                    <p className="fd-desc">{f.description}</p>
+                    <div className="fd-why"><strong>Why it matters:</strong> {f.why_important}</div>
+                    <a className="fd-link" href={f.resource_url} target="_blank" rel="noopener noreferrer">📖 Learn more →</a>
+                    <InvestRow cash={cash} onInvest={amt => invest(modal.key, amt)} />
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
+          {/* EVENTS PICKER */}
+          {/* CASH EXPLANATION MODAL */}
+          {modal && modal.type === 'cash' && (
+            <div className="ov" onClick={() => setModal(null)}>
+              <div className="mod" onClick={e => e.stopPropagation()}>
+                <div className="mod-h">
+                  <h2>💵 Cash</h2>
+                  <button className="mod-x" onClick={() => setModal(null)}>✕</button>
+                </div>
+                <div className="mod-b">
+                  <p style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--ink)' }}>
+                    This is the cash you currently have available to invest. It is initialized to one year's worth
+                    of the recommended monthly contribution returned by your profile. The recommendation is
+                    <strong> 15% of your after-tax income</strong>, divided into monthly amounts.
+                  </p>
+                  <div style={{ marginTop: 10, marginBottom: 10, display: 'flex', justifyContent: 'space-between', gap: 12 }}>
+                    <div style={{ background: 'var(--warm)', padding: 12, borderRadius: 8, flex: 1, textAlign: 'center' }}>
+                      <div style={{ fontSize: 11, color: 'var(--brown)' }}>Monthly recommended</div>
+                      <div style={{ fontWeight: 800, marginTop: 6 }}>{profile ? fmtD(profile.monthly_invest_recommended) : '—'}</div>
+                    </div>
+                    <div style={{ background: 'var(--warm)', padding: 12, borderRadius: 8, flex: 1, textAlign: 'center' }}>
+                      <div style={{ fontSize: 11, color: 'var(--brown)' }}>Available cash</div>
+                      <div style={{ fontWeight: 800, marginTop: 6 }}>{fmt(cash)}</div>
+                    </div>
+                  </div>
+                  <p style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--ink)' }}>
+                    You can invest this cash by clicking any asset tile in the strip and using the <strong>Invest </strong>
+                    button. Each time you advance the year the app also adds the recommended monthly contributions
+                    into cash (annualized) before applying growth and life events.
+                  </p>
+                  <div style={{ marginTop: 12 }}>
+                    <div style={{ fontSize: 12, marginBottom: 8, fontWeight: 700 }}>Donate to Charity</div>
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                      <input type="number" placeholder="Amount" value={donationAmt} onChange={e => setDonationAmt(e.target.value)}
+                        style={{ flex: 1, padding: '9px 11px', borderRadius: 7, border: '2px solid var(--tan)' }} />
+                      <button className="inv-btn" onClick={donate} disabled={busy || !profile}>Donate</button>
+                    </div>
+                    {donationMsg && <div style={{ marginTop: 8, fontSize: 12, color: 'var(--brown)' }}>{donationMsg}</div>}
+                  </div>
+                  <button className="ob-btn" style={{ marginTop: 12 }} onClick={() => setModal(null)}>Got it</button>
+                </div>
+              </div>
+            </div>
+          )}
+          {modal && modal.type === 'events' && (
+            <div className="ov" onClick={() => setModal(null)}>
+              <div className="mod" onClick={e => e.stopPropagation()}>
+                <div className="mod-h">
+                  <h2>🎲 Trigger a Life Event</h2>
+                  <button className="mod-x" onClick={() => setModal(null)}>✕</button>
+                </div>
+                <div className="mod-b">
+                  <div className="ev-list">
+                    {EVENTS_STATIC.map(ev => {
+                      const isLoss = ev.cost > 0, isGain = ev.cost < 0;
+                      return (
+                        <div key={ev.id} className="ev-pick" onClick={() => { setModal({ type: 'confirm-event', event: ev }) }}>
+                          <span className="ep-ic">{ev.emoji}</span>
+                          <div className="ep-info">
+                            <div className="ep-t">{ev.title}</div>
+                            <div className="ep-d">{ev.description}</div>
+                          </div>
+                          <div className={`ep-cost ${isLoss ? 'loss' : isGain ? 'gain' : 'neutral'}`}>
+                            {isLoss ? '-' : '+'}{fmt(Math.abs(ev.cost))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* CONFIRM LIFE EVENT (Yes / No) */}
+          {modal && modal.type === 'confirm-event' && modal.event && (() => {
+            const ev = modal.event;
+            const isLoss = ev.cost > 0, isGain = ev.cost < 0, isMarket = ev.category === 'market';
+            return (
+              <div className="ov" onClick={() => setModal(null)}>
+                <div className="mod" onClick={e => e.stopPropagation()}>
+                  <div className="mod-h">
+                    <h2>{ev.emoji} {ev.title}</h2>
+                    <button className="mod-x" onClick={() => setModal(null)}>✕</button>
+                  </div>
+                  <div className="mod-b">
+                    <p className="ev-desc">{ev.description}</p>
+                    {isMarket ? (
+                      <div className="ev-cost"><span className="l">Market Effect</span><span className={`v ${ev.market_effect < 0 ? 'loss' : 'gain'}`}>{ev.market_effect > 0 ? '+' : ''}{(ev.market_effect * 100).toFixed(0)}%</span></div>
+                    ) : (
+                      <div className="ev-cost"><span className="l">Impact</span><span className={`v ${isLoss ? 'loss' : 'gain'}`}>{isLoss ? '-' : '+'}{fmt(Math.abs(ev.cost))}</span></div>
+                    )}
+                    <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
+                      <button className="ev-btn" onClick={() => { setModal(null); advance(ev.id); }}>Yes — Apply Event</button>
+                      <button className="ev-btn" style={{ background: 'var(--tan)', color: 'var(--ink)' }} onClick={() => setModal(null)}>No — Cancel</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
+          {/* RANDOM EVENT CONFIRMATION (during year advance) */}
+          {modal && modal.type === 'confirm-random-event' && modal.event && (() => {
+            const ev = modal.event;
+            const isLoss = ev.cost > 0, isMarket = ev.category === 'market';
+            return (
+              <div className="ov">
+                <div className="mod" onClick={e => e.stopPropagation()}>
+                  <div className="mod-h">
+                    <h2>{ev.emoji} {ev.title}</h2>
+                  </div>
+                  <div className="mod-b">
+                    <p className="ev-desc">{ev.description}</p>
+                    {isMarket ? (
+                      <div className="ev-cost"><span className="l">Market Effect</span><span className={`v ${ev.market_effect < 0 ? 'loss' : 'gain'}`}>{ev.market_effect > 0 ? '+' : ''}{(ev.market_effect * 100).toFixed(0)}%</span></div>
+                    ) : (
+                      <div className="ev-cost"><span className="l">Impact</span><span className={`v ${isLoss ? 'loss' : 'gain'}`}>{isLoss ? '-' : '+'}{fmt(Math.abs(ev.cost))}</span></div>
+                    )}
+                    <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
+                      <button className="ev-btn" onClick={() => acceptEventAdvance(ev.id)}>Yes — Accept</button>
+                      <button className="ev-btn" style={{ background: 'var(--tan)', color: 'var(--ink)' }} onClick={() => rejectEventAdvance()}>No — Skip Event</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
+          {/* EVENT RESULT */}
+          {modal && modal.type === 'event' && modal.event && (() => {
+            const ev = modal.event;
+            const isLoss = ev.cost > 0, isMarket = ev.category === 'market';
+            return (
+              <div className="ov">
+                <div className="mod">
+                  <div className="mod-h" style={{ flexDirection: 'column', alignItems: 'center', gap: 4, justifyContent: 'center' }}>
+                    <div className="ev-emoji">{ev.emoji}</div>
+                    <h2 style={{ textAlign: 'center' }}>{ev.title}</h2>
+                    <span className={`ev-cat ${ev.category}`}>{ev.category}</span>
+                  </div>
+                  <div className="mod-b" style={{ textAlign: 'center' }}>
+                    <p className="ev-desc">{ev.description}</p>
+                    {!isMarket && (
+                      <div className="ev-cost">
+                        <span className="l">{isLoss ? 'Cost' : 'You Gained'}</span>
+                        <span className={`v ${isLoss ? 'loss' : 'gain'}`}>{isLoss ? '-' : '+'}{fmt(Math.abs(ev.cost))}</span>
+                      </div>
+                    )}
+                    {isMarket && (
+                      <div className="ev-cost">
+                        <span className="l">Market Effect</span>
+                        <span className={`v ${ev.market_effect < 0 ? 'loss' : 'gain'}`}>{ev.market_effect > 0 ? '+' : ''}{(ev.market_effect * 100).toFixed(0)}%</span>
+                      </div>
+                    )}
+                    <button className="ev-btn" onClick={() => setModal(null)}>Continue →</button>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+          {/* TIERS MODAL */}
+          {modal && modal.type === 'tiers' && (
+            <div className="ov" onClick={() => setModal(null)}>
+              <div className="mod" onClick={e => e.stopPropagation()}>
+                <div className="mod-h">
+                  <h2>🏆 Tiers & Points</h2>
+                  <button className="mod-x" onClick={() => setModal(null)}>✕</button>
+                </div>
+                <div className="mod-b">
+                  <div style={{ marginBottom: 12, fontSize: 13, color: 'var(--brown)' }}>Total points: <strong>{totalPts}</strong></div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {TIERS.map((t, i) => {
+                      const next = TIERS[i + 1];
+                      const need = next ? Math.max(0, next.min - totalPts) : 0;
+                      return (
+                        <div key={t.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 10, background: 'var(--warm)', borderRadius: 8 }}>
+                          <div>
+                            <div style={{ fontWeight: 800 }}>{t.emoji} {t.name}</div>
+                            <div style={{ fontSize: 12, color: 'var(--brown)' }}>Requires {t.min} points</div>
+                          </div>
+                          <div style={{ textAlign: 'right' }}>
+                            <div style={{ fontWeight: 800 }}>{totalPts >= t.min ? 'Unlocked' : 'Locked'}</div>
+                            {next && <div style={{ fontSize: 12, color: 'var(--brown)' }}>{need > 0 ? need + ' pts to next' : ''}</div>}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div style={{ marginTop: 12 }}>
+                    <button className="ob-btn" onClick={() => setModal(null)}>Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    /* ── invest amount sub-component ── */
+    function InvestRow({ cash, onInvest }) {
+      const [amt, setAmt] = useState('');
+      const val = parseFloat(amt) || 0;
+      const bad = val > cash;
+      return (
+        <div style={{ marginTop: 16 }}>
+          <div className="inv-row">
+            <div className="inv-$">
+              <span>$</span>
+              <input type="number" placeholder="Amount" value={amt} onChange={e => setAmt(e.target.value)} max={cash} />
+            </div>
+            <button className="inv-btn" onClick={() => { if (val > 0 && val <= cash) { onInvest(val); setAmt('') } }} disabled={bad || val <= 0}>Invest</button>
+          </div>
+          <div className={`inv-warn ${bad ? 'show' : ''}`}>Not enough cash (you have {fmt(cash)})</div>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+
+</html>
