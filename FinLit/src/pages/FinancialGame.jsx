@@ -325,6 +325,14 @@ function FinancialGame() {
             className="game-info-modal game-cashstash-modal"
             onClick={(e) => e.stopPropagation()}
           >
+            <button
+              type="button"
+              className="game-info-modal-close-x"
+              onClick={() => setShowCashStashModal(false)}
+              aria-label="Close"
+            >
+              ×
+            </button>
             <div className="game-cashstash-modal-header">
               <h2 className="game-info-modal-title">Your cash</h2>
               <p className="game-cashstash-modal-value">{formatMoney(cash)}</p>
@@ -380,6 +388,14 @@ function FinancialGame() {
             className="game-info-modal"
             onClick={(e) => e.stopPropagation()}
           >
+            <button
+              type="button"
+              className="game-info-modal-close-x"
+              onClick={() => setShowSavingsModal(false)}
+              aria-label="Close"
+            >
+              ×
+            </button>
             <div className="game-info-modal-header" style={{ borderColor: TFSA_INFO.color }}>
               <span className="game-info-modal-icon">{TFSA_INFO.icon}</span>
               <h2 className="game-info-modal-title">{TFSA_INFO.full_name}</h2>
@@ -433,13 +449,6 @@ function FinancialGame() {
                 </button>
               </div>
             </div>
-            <button
-              type="button"
-              className="game-modal-btn game-info-modal-close"
-              onClick={() => setShowSavingsModal(false)}
-            >
-              Close
-            </button>
           </div>
         </div>
       )}
@@ -455,6 +464,14 @@ function FinancialGame() {
             className="game-info-modal"
             onClick={(e) => e.stopPropagation()}
           >
+            <button
+              type="button"
+              className="game-info-modal-close-x"
+              onClick={() => setShowStocksModal(false)}
+              aria-label="Close"
+            >
+              ×
+            </button>
             <div className="game-info-modal-header" style={{ borderColor: STOCKS_INFO.color }}>
               <span className="game-info-modal-icon">{STOCKS_INFO.icon}</span>
               <h2 className="game-info-modal-title">{STOCKS_INFO.full_name}</h2>
@@ -508,13 +525,6 @@ function FinancialGame() {
                 </button>
               </div>
             </div>
-            <button
-              type="button"
-              className="game-modal-btn game-info-modal-close"
-              onClick={() => setShowStocksModal(false)}
-            >
-              Close
-            </button>
           </div>
         </div>
       )}
@@ -562,6 +572,14 @@ function FinancialGame() {
             className="game-info-modal"
             onClick={(e) => e.stopPropagation()}
           >
+            <button
+              type="button"
+              className="game-info-modal-close-x"
+              onClick={() => setShowCharityModal(false)}
+              aria-label="Close"
+            >
+              ×
+            </button>
             <div className="game-info-modal-header" style={{ borderColor: CHARITY_INFO.color }}>
               <span className="game-info-modal-icon">{CHARITY_INFO.icon}</span>
               <h2 className="game-info-modal-title">{CHARITY_INFO.full_name}</h2>
@@ -572,6 +590,14 @@ function FinancialGame() {
               <p className="game-info-modal-why">
                 <strong>Why it matters:</strong> {CHARITY_INFO.why_important}
               </p>
+              <a
+                href={CHARITY_INFO.resource_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="game-info-modal-link game-info-modal-link--charity"
+              >
+                About charitable giving (Canada) →
+              </a>
               <p className="game-transfer-balance">Total donated: <strong>${formatMoney(charity)}</strong></p>
               <p className="game-transfer-hint">Cash available: ${formatMoney(cash)}</p>
               <label className="game-transfer-label">
@@ -589,27 +615,12 @@ function FinancialGame() {
               {transferError && showCharityModal && <p className="game-transfer-error" role="alert">{transferError}</p>}
               <button
                 type="button"
-                className="game-modal-btn game-transfer-btn"
+                className="game-modal-btn game-transfer-btn game-transfer-btn--full"
                 onClick={handleDonateToCharity}
               >
                 Donate
               </button>
-              <a
-                href={CHARITY_INFO.resource_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="game-info-modal-link game-info-modal-link--charity"
-              >
-                About charitable giving (Canada) →
-              </a>
             </div>
-            <button
-              type="button"
-              className="game-modal-btn game-info-modal-close"
-              onClick={() => setShowCharityModal(false)}
-            >
-              Close
-            </button>
           </div>
         </div>
       )}

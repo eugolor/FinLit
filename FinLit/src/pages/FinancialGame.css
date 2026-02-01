@@ -340,6 +340,7 @@
 }
 
 .game-info-modal {
+  position: relative;
   background: #fffefb;
   border: 2px solid #e8e0d5;
   border-radius: 1rem;
@@ -352,6 +353,41 @@
   flex-direction: column;
   font-family: 'Comic Sans MS', 'Chalkboard SE', system-ui, sans-serif;
   letter-spacing: 0.01em;
+}
+
+.game-info-modal-close-x {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 1;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  line-height: 1;
+  color: #5c3d2e;
+  background: transparent;
+  border: none;
+  border-radius: 0.35rem;
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.game-info-modal-close-x:hover {
+  color: #2d1f14;
+  background: rgba(45, 31, 20, 0.08);
+}
+
+.game-info-modal-close-x:focus {
+  outline: none;
+}
+
+.game-info-modal-close-x:focus-visible {
+  outline: 2px solid #a88b6a;
+  outline-offset: 2px;
 }
 
 .game-info-modal-header {
@@ -557,6 +593,11 @@
 
 .game-transfer-btn {
   margin-top: 0.5rem;
+}
+
+.game-transfer-btn--full {
+  width: 100%;
+  display: block;
 }
 
 .game-info-modal-close {
