@@ -152,15 +152,6 @@
   transform: scale(1.08);
 }
 
-<<<<<<< HEAD
-=======
-.game-cashstash-wrap {
-  position: relative;
-  display: inline-block;
-  transform: translate(40px, calc(-70% + 240px));
-}
-
->>>>>>> fa537676342b9f377f1164ef1efcf179548472cd
 .game-cashstash-wrap--clickable {
   cursor: pointer;
 }
