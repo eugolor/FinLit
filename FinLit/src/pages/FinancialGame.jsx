@@ -6,6 +6,7 @@ import cashStashImg from '../assets/CashStash.png'
 import charityImg from '../assets/Charity.png'
 import savingsImg from '../assets/Savings.png'
 import stocksImg from '../assets/Stocks.png'
+import { useGame } from '../hooks/useGame'
 
 const TFSA_INFO = {
   name: 'TFSA',
@@ -57,10 +58,18 @@ function FinancialGame() {
   const [startingMoney, setStartingMoney] = useState('')
   const [financialGoals, setFinancialGoals] = useState('')
 
+  const { gameState, startGame, advanceYear, buyStock, loading } = useGame();
+  
   const handleStartJourney = (e) => {
-    e.preventDefault()
-    setShowModal(false)
-  }
+    e.preventDefault();
+    startGame(parseInt(age), parseInt(startingMoney), financialGoals.split(','));
+    setShowModal(false);
+  };
+
+  // const handleStartJourney = (e) => {
+  //   e.preventDefault()
+  //   setShowModal(false)
+  // }
 
   return (
     <div
