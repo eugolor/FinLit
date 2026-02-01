@@ -41,22 +41,6 @@ CANADIAN_FUNDS = {
         'best_for_ages': '18–40', 'contribution_limit_2024': 8000,
         'resource_url': 'https://www.canada.ca/en/revenue-agency/services/tax/individuals/fhsa.html', 'risk': 'Low–Medium'
     },
-    'etf': {
-        'name': 'ETF', 'full_name': 'Exchange-Traded Fund', 'icon': '📈', 'color': '#8b5cf6',
-        'annual_return': 0.09,
-        'description': 'A basket of stocks or bonds that trades like a single stock. Extremely low fees. An S&P 500 ETF owns a tiny piece of the 500 biggest US companies.',
-        'why_important': 'The simplest way to diversify. Index ETFs historically beat most actively managed funds over 10+ years.',
-        'best_for_ages': '18–65', 'contribution_limit_2024': None,
-        'resource_url': 'https://www.investopedia.com/terms/e/etf.asp', 'risk': 'Medium'
-    },
-    'mutual_fund': {
-        'name': 'Mutual Fund', 'full_name': 'Mutual Fund', 'icon': '📊', 'color': '#ec4899',
-        'annual_return': 0.06,
-        'description': 'A pool of money managed by a professional fund manager. Fees (MERs) are higher than ETFs — typically 1.5–2.5% per year in Canada.',
-        'why_important': 'Some prefer a human making decisions. But most mutual funds underperform index ETFs over 10+ years after fees.',
-        'best_for_ages': '25–60', 'contribution_limit_2024': None,
-        'resource_url': 'https://www.securities.gov.on.ca/en/investors/mutual-funds', 'risk': 'Medium'
-    },
     'gic': {
         'name': 'GIC', 'full_name': 'Guaranteed Investment Certificate', 'icon': '🔒', 'color': '#14b8a6',
         'annual_return': 0.045,
@@ -64,14 +48,6 @@ CANADIAN_FUNDS = {
         'why_important': 'Perfect for money you can\'t afford to lose. A safe parking spot while you figure out your next move.',
         'best_for_ages': '18–70', 'contribution_limit_2024': None,
         'resource_url': 'https://www.canada.ca/en/financial-consumer-agency/services/saving-investing/gics.html', 'risk': 'Very Low'
-    },
-    'stock': {
-        'name': 'Stocks', 'full_name': 'Individual Stocks', 'icon': '🚀', 'color': '#f97316',
-        'annual_return': 0.10,
-        'description': 'Buying ownership in a single company. If the company does well, your stock goes up. High reward, but also the most volatile.',
-        'why_important': 'Can produce the highest returns over long periods. Best as part of a diversified portfolio, not your only investment.',
-        'best_for_ages': '18–50', 'contribution_limit_2024': None,
-        'resource_url': 'https://www.investopedia.com/terms/s/stock.asp', 'risk': 'High'
     },
     'resp': {
         'name': 'RESP', 'full_name': 'Registered Education Savings Plan', 'icon': '🎓', 'color': '#6366f1',
@@ -127,20 +103,20 @@ def calculate_tax(income):
 #  Allocation by age 
 def get_allocation_by_age(age, income, goals):
     if age < 18:
-        base = {'tfsa':60,'gic':30,'etf':10}
+        base = {'tfsa':60,'gic':40}
     elif age < 30:
-        base = ({'tfsa':35,'etf':25,'stock':20,'fhsa':20} if 'home' in goals
-                else {'tfsa':40,'etf':30,'stock':20,'rrsp':10})
+        base = ({'tfsa':35,'fhsa':65} if 'home' in goals
+                else {'tfsa':60,'rrsp':40})
     elif age < 45:
-        base = ({'tfsa':25,'rrsp':25,'etf':25,'fhsa':25} if 'home' in goals
-                else {'tfsa':30,'rrsp':30,'etf':25,'stock':15})
+        base = ({'tfsa':40,'rrsp':30,'fhsa':30} if 'home' in goals
+                else {'tfsa':50,'rrsp':50})
     elif age < 60:
-        base = {'tfsa':30,'rrsp':35,'etf':20,'gic':15}
+        base = {'tfsa':40,'rrsp':40,'gic':20}
     else:
-        base = {'tfsa':25,'rrsp':20,'gic':40,'etf':15}
+        base = {'tfsa':35,'rrsp':25,'gic':40}
     if income > 100000 and 'rrsp' in base:
         base['rrsp'] = min(base.get('rrsp',0)+10, 50)
-        if 'etf' in base: base['etf'] = max(base['etf']-10, 5)
+        if 'tfsa' in base: base['tfsa'] = max(base['tfsa']-10, 15)
     total = sum(base.values())
     base = {k: round(v/total*100) for k,v in base.items()}
     diff = 100 - sum(base.values())
@@ -168,8 +144,6 @@ CHECKPOINTS = [
     {'id':'open_tfsa','title':'Opened a TFSA','points':100,'emoji':'🛡️'},
     {'id':'open_rrsp','title':'Opened an RRSP','points':100,'emoji':'🏖️'},
     {'id':'open_fhsa','title':'Opened an FHSA','points':100,'emoji':'🏠'},
-    {'id':'first_etf','title':'Bought first ETF','points':150,'emoji':'📈'},
-    {'id':'first_stock','title':'Bought first Stock','points':150,'emoji':'🚀'},
     {'id':'emergency_fund','title':'Built 3-month emergency fund','points':200,'emoji':'🏦'},
     {'id':'survived_crash','title':'Survived a market crash','points':250,'emoji':'💪'},
     {'id':'net_worth_10k','title':'Net worth: $10,000','points':200,'emoji':'💰'},
@@ -290,15 +264,7 @@ def simulate_year():
     trigger = d.get('trigger_event', None)
     inflation = 0.025
 
-    cash += monthly * 12  # annual contributions land in cash
-
-    # Grow portfolio
-    new_p = {}
-    for asset, bal in portfolio.items():
-        rate = CANADIAN_FUNDS.get(asset,{}).get('annual_return',0.05)
-        new_p[asset] = round(bal * (1 + rate), 2)
-
-    # Life event
+    # Life event (check first before processing)
     preview = bool(d.get('preview', False))
     force_no_event = bool(d.get('force_no_event', False))
 
@@ -308,26 +274,39 @@ def simulate_year():
     elif not force_no_event and random.random() < 0.25:
         event = random.choice(LIFE_EVENTS)
 
+    # If preview mode and event exists, return event without processing year advancement
+    if preview and event:
+        return jsonify({'preview': True, 'portfolio': portfolio, 'cash': cash, 'age': age, 'year': year,
+                        'net_worth': cash + sum(portfolio.values()), 'event': event, 'earned_checkpoints': [], 'inflation_rate': inflation})
+
+    # Now process the actual year advancement
+    cash += monthly * 12  # annual contributions land in cash
+
+    # Grow portfolio
+    new_p = {}
+    for asset, bal in portfolio.items():
+        rate = CANADIAN_FUNDS.get(asset,{}).get('annual_return',0.05)
+        new_p[asset] = round(bal * (1 + rate), 2)
+
     event_applied = None
-    # If preview mode is requested, do not mutate new_p or cash with event effects — just return the chosen event
+    # Process the event if it exists
     if event:
         event_applied = dict(event)
-        if not preview:
-            if event.get('market_effect'):
-                eff = event['market_effect']
-                for a in ['stock','etf','mutual_fund']:
-                    if a in new_p: new_p[a] = round(new_p[a]*(1+eff),2)
-            if event['cost'] > 0:
-                rem = event['cost']
-                if cash >= rem: cash -= rem; rem = 0
-                else: rem -= cash; cash = 0
-                for a in ['gic','tfsa','etf','mutual_fund','stock','rrsp','fhsa','resp']:
-                    if a in new_p and rem > 0:
-                        w = min(new_p[a], rem); new_p[a] -= w; rem -= w
-                event_applied['actual_cost'] = event['cost']
-            elif event['cost'] < 0:
-                cash += abs(event['cost'])
-                event_applied['actual_gain'] = abs(event['cost'])
+        if event.get('market_effect'):
+            eff = event['market_effect']
+            for a in ['stock','etf','mutual_fund']:
+                if a in new_p: new_p[a] = round(new_p[a]*(1+eff),2)
+        if event['cost'] > 0:
+            rem = event['cost']
+            if cash >= rem: cash -= rem; rem = 0
+            else: rem -= cash; cash = 0
+            for a in ['gic','tfsa','etf','mutual_fund','stock','rrsp','fhsa','resp']:
+                if a in new_p and rem > 0:
+                    w = min(new_p[a], rem); new_p[a] -= w; rem -= w
+            event_applied['actual_cost'] = event['cost']
+        elif event['cost'] < 0:
+            cash += abs(event['cost'])
+            event_applied['actual_gain'] = abs(event['cost'])
 
 
     net_worth = cash + sum(new_p.values())
@@ -337,8 +316,6 @@ def simulate_year():
     if new_p.get('tfsa',0)>0: cp.append('open_tfsa')
     if new_p.get('rrsp',0)>0: cp.append('open_rrsp')
     if new_p.get('fhsa',0)>0: cp.append('open_fhsa')
-    if new_p.get('etf',0)>0: cp.append('first_etf')
-    if new_p.get('stock',0)>0: cp.append('first_stock')
     if cash >= monthly*3: cp.append('emergency_fund')
     if event and event.get('market_effect',0)<0: cp.append('survived_crash')
     if net_worth>=10000: cp.append('net_worth_10k')
@@ -378,13 +355,10 @@ def game_summary():
     years = end_age - start_age
     total_income = income * years
 
-    stock_pct = fp.get('stock',0)/max(nw,1)*100
     gic_pct = fp.get('gic',0)/max(nw,1)*100
     cash_pct = fc/max(nw,1)*100
 
-    if stock_pct > 40:
-        personality, pdesc = 'Unhinged Trader', 'You went all-in on stocks. Bold, risky, and memorable.'
-    elif gic_pct > 40 or cash_pct > 40:
+    if gic_pct > 40 or cash_pct > 40:
         personality, pdesc = 'Ultra Conservative', 'You played it safe. Secure, but inflation may have quietly eroded your wealth.'
     else:
         personality, pdesc = 'Balanced Strategist', 'You diversified well — steady, resilient, and smart. Most advisors would approve.'

@@ -1441,7 +1441,7 @@
       /* ── tree sizing (scales 1× → 2.4× over 40 years) ── */
       const startAge = +obAge || 25;
       const yearsIn = Math.max(0, age - startAge);
-      const tScale = Math.min(1 + yearsIn * 0.035, 2.4);
+      const tScale = Math.min(1 + (netWorth / 100000) * 1.4, 2.4);
       const trunkH = 18 + yearsIn * 2.8;
       const canH = 36 + yearsIn * 2.2;
 
@@ -1549,22 +1549,7 @@
               <div className="trunk" style={{ height: trunkH }}></div>
             </div>
 
-            {/* house */}
-            <div className="house">
-              <div className="h-roof"></div>
-              <div className="h-body">
-                <div className="h-door"></div>
-                <div className="h-win h-win1"></div>
-                <div className="h-win h-win2"></div>
-              </div>
-            </div>
 
-            {/* checkpoint decorations scattered on ground */}
-            {earnedCps.map((cpId, i) => {
-              const cp = CP_DEFS.find(c => c.id === cpId);
-              if (!cp || !DECO_POS[i]) return null;
-              return <div key={cpId} className="deco" style={{ ...DECO_POS[i], animationDelay: i * 0.3 + 's' }}>{cp.emoji}</div>;
-            })}
           </div>
 
           {/* ASSET STRIP */}
@@ -1735,11 +1720,10 @@
             const ev = modal.event;
             const isLoss = ev.cost > 0, isMarket = ev.category === 'market';
             return (
-              <div className="ov" onClick={() => setModal(null)}>
+              <div className="ov">
                 <div className="mod" onClick={e => e.stopPropagation()}>
                   <div className="mod-h">
                     <h2>{ev.emoji} {ev.title}</h2>
-                    <button className="mod-x" onClick={() => setModal(null)}>✕</button>
                   </div>
                   <div className="mod-b">
                     <p className="ev-desc">{ev.description}</p>
