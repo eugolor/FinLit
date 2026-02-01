@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import './FinancialGame.css'
 import gamePageBg from '../assets/GamePageBackground.png'
 import cashStashImg from '../assets/CashStash.png'
@@ -45,8 +45,13 @@ const CHARITY_INFO = {
   resource_url: 'https://www.canada.ca/en/revenue-agency/services/charities-giving.html',
 }
 
+const GAME_PROFILE_DONE_KEY = 'finlit-game-profile-done'
+
 function FinancialGame() {
-  const [showModal, setShowModal] = useState(true)
+  const location = useLocation()
+  const cameFromIntro = location.state?.fromIntro === true
+  const alreadyCompletedProfile = typeof sessionStorage !== 'undefined' && sessionStorage.getItem(GAME_PROFILE_DONE_KEY) === 'true'
+  const [showModal, setShowModal] = useState(cameFromIntro && !alreadyCompletedProfile)
   const [showSavingsModal, setShowSavingsModal] = useState(false)
   const [showStocksModal, setShowStocksModal] = useState(false)
   const [showCashStashModal, setShowCashStashModal] = useState(false)
@@ -59,6 +64,9 @@ function FinancialGame() {
 
   const handleStartJourney = (e) => {
     e.preventDefault()
+    try {
+      sessionStorage.setItem(GAME_PROFILE_DONE_KEY, 'true')
+    } catch (_) {}
     setShowModal(false)
   }
 
@@ -67,8 +75,11 @@ function FinancialGame() {
       className="game-page"
       style={{ backgroundImage: `url(${gamePageBg})` }}
     >
-      <Link to="/" className="game-back-link">
-        ← Back to Intro
+      <Link to="/" className="game-back-link" aria-label="Back to intro">
+        ←
+      </Link>
+      <Link to="/treasure" className="game-forward-link" aria-label="Go to Treasure">
+        →
       </Link>
 
       {showModal && (
