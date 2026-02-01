@@ -1,7 +1,61 @@
 /**
  * Stock API Integration Guide
- * Add real-time stock prices and predictions to FinLit
+ * Yahoo Finance (yfinance equivalent) + Alpha Vantage fallback
  */
+
+/** Example tickers for the game (real symbols from Yahoo Finance) */
+export const EXAMPLE_STOCKS = [
+    { ticker: 'AAPL', name: 'Apple Inc.', estGrowth: 'High', risk: 'Medium' },
+    { ticker: 'MSFT', name: 'Microsoft Corporation', estGrowth: 'High', risk: 'Medium' },
+    { ticker: 'GOOGL', name: 'Alphabet (Google)', estGrowth: 'High', risk: 'Medium' },
+    { ticker: 'AMZN', name: 'Amazon.com Inc.', estGrowth: 'High', risk: 'Medium' },
+    { ticker: 'TSLA', name: 'Tesla Inc.', estGrowth: 'Very High', risk: 'High' },
+];
+
+/**
+ * Yahoo Finance chart API (same data source as Python yfinance)
+ * Uses public chart endpoint; may require CORS proxy in some environments.
+ */
+export async function fetchYahooQuote(ticker) {
+    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=1d`;
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+
+    try {
+        const res = await fetch(proxyUrl);
+        const data = await res.json();
+        const result = data?.chart?.result?.[0];
+        if (!result) return null;
+
+        const meta = result.meta || {};
+        const quote = result.indicators?.quote?.[0];
+        const price = meta.regularMarketPrice ?? (quote?.close?.[quote.close.length - 1]) ?? meta.previousClose ?? 0;
+        const prevClose = meta.previousClose ?? price;
+        const change = price - prevClose;
+        const changePercent = prevClose ? (change / prevClose) * 100 : 0;
+
+        return {
+            symbol: meta.symbol || ticker,
+            price: typeof price === 'number' ? Math.round(price * 100) / 100 : 0,
+            change,
+            changePercent,
+            timestamp: new Date().toISOString(),
+        };
+    } catch (err) {
+        console.warn('Yahoo fetch failed for', ticker, err);
+        return null;
+    }
+}
+
+/**
+ * Fetch quote: try Yahoo first (yfinance equivalent), then Alpha Vantage if key set
+ */
+export async function fetchStockQuote(ticker) {
+    const yahoo = await fetchYahooQuote(ticker);
+    if (yahoo && yahoo.price > 0) return yahoo;
+    const av = await fetchStockPrice(ticker);
+    if (av && av.price > 0) return { symbol: av.symbol, price: av.price, change: av.change, changePercent: av.change, timestamp: av.timestamp };
+    return null;
+}
 
 /**
  * OPTION 1: Alpha Vantage (Free with API Key)

@@ -15,6 +15,11 @@ export const GAME_ACTIONS = {
     INVEST_IN_FUND: 'INVEST_IN_FUND',
     DONATE: 'DONATE',
 
+    // Stocks
+    BUY_STOCK: 'BUY_STOCK',
+    SELL_STOCK: 'SELL_STOCK',
+    SET_STOCK_PRICES: 'SET_STOCK_PRICES',
+
     // Year progression
     SIMULATE_YEAR: 'SIMULATE_YEAR',
     PREVIEW_YEAR: 'PREVIEW_YEAR',
@@ -33,8 +38,10 @@ const initialGameState = {
 
     // Game state
     year: 2025,
-    cash: 0,
+    cash: 0, // checking / actual cash at hand
     portfolio: {}, // e.g., { tfsa: 500, rrsp: 1000 }
+    stock_holdings: {}, // { ticker: { shares: number } }
+    stock_prices: {}, // { ticker: number } - last known prices for net worth
     total_points: 0,
     checkpoints_earned: [],
 
@@ -97,6 +104,51 @@ function gameReducer(state, action) {
             };
         }
 
+        case GAME_ACTIONS.BUY_STOCK: {
+            const { ticker, shares, pricePerShare } = action.payload;
+            const cost = Math.round(shares * pricePerShare * 100) / 100;
+            if (state.cash < cost) {
+                throw new Error('Insufficient cash');
+            }
+            const holdings = { ...state.stock_holdings };
+            const current = holdings[ticker] || { shares: 0 };
+            holdings[ticker] = { shares: current.shares + shares };
+            return {
+                ...state,
+                cash: Math.round((state.cash - cost) * 100) / 100,
+                stock_holdings: holdings,
+                stock_prices: { ...state.stock_prices, [ticker]: pricePerShare },
+            };
+        }
+
+        case GAME_ACTIONS.SELL_STOCK: {
+            const { ticker, shares, pricePerShare } = action.payload;
+            const current = state.stock_holdings[ticker];
+            if (!current || current.shares < shares) {
+                throw new Error('Insufficient shares');
+            }
+            const proceeds = Math.round(shares * pricePerShare * 100) / 100;
+            const holdings = { ...state.stock_holdings };
+            if (current.shares === shares) {
+                delete holdings[ticker];
+            } else {
+                holdings[ticker] = { shares: current.shares - shares };
+            }
+            return {
+                ...state,
+                cash: Math.round((state.cash + proceeds) * 100) / 100,
+                stock_holdings: holdings,
+                stock_prices: { ...state.stock_prices, [ticker]: pricePerShare },
+            };
+        }
+
+        case GAME_ACTIONS.SET_STOCK_PRICES: {
+            return {
+                ...state,
+                stock_prices: { ...state.stock_prices, ...action.payload },
+            };
+        }
+
         case GAME_ACTIONS.SIMULATE_YEAR: {
             const { trigger_event = null, force_no_event = false } = action.payload;
 
@@ -134,12 +186,23 @@ function gameReducer(state, action) {
                 newEvents.push(result.event.id || 'unknown');
             }
 
+            // Stocks: apply random return so net worth changes over time (-10% to +30% per year)
+            const newStockPrices = { ...state.stock_prices };
+            for (const ticker of Object.keys(state.stock_holdings)) {
+                const prev = newStockPrices[ticker];
+                if (prev && prev > 0) {
+                    const annualReturn = 0.1 + Math.random() * 0.2; // 10% to 30% (simplified)
+                    newStockPrices[ticker] = Math.round(prev * (1 + annualReturn) * 100) / 100;
+                }
+            }
+
             return {
                 ...state,
                 portfolio: result.portfolio,
                 cash: result.cash,
                 age: result.age,
                 year: result.year,
+                stock_prices: newStockPrices,
                 total_points: state.total_points + checkpointPoints,
                 checkpoints_earned: uniqueCheckpoints,
                 events_faced: newEvents,
@@ -250,11 +313,45 @@ export function useGameState(initialAge = 25, initialIncome = 60000, endingAge =
         });
     }, []);
 
+    const buyStock = useCallback((ticker, shares, pricePerShare) => {
+        try {
+            dispatch({
+                type: GAME_ACTIONS.BUY_STOCK,
+                payload: { ticker, shares, pricePerShare },
+            });
+            return { success: true };
+        } catch (err) {
+            return { success: false, error: err.message };
+        }
+    }, []);
+
+    const sellStock = useCallback((ticker, shares, pricePerShare) => {
+        try {
+            dispatch({
+                type: GAME_ACTIONS.SELL_STOCK,
+                payload: { ticker, shares, pricePerShare },
+            });
+            return { success: true };
+        } catch (err) {
+            return { success: false, error: err.message };
+        }
+    }, []);
+
+    const setStockPrices = useCallback((prices) => {
+        dispatch({
+            type: GAME_ACTIONS.SET_STOCK_PRICES,
+            payload: prices,
+        });
+    }, []);
+
     return {
         state,
         initializeGame,
         investInFund,
         donate,
+        buyStock,
+        sellStock,
+        setStockPrices,
         simulateGameYear,
         previewGameYear,
         endGame,
