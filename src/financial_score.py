@@ -1,32 +1,3 @@
-@dataclass
-class financial_score:
-    Emergency_fund_status:
-    Diversification:
-    Intentionality:
-    Weights: #beginner level
-        
-    
-    def diversification(self):
-        #based on percentage of income invested in stocks, mutual funds, etc,
-
-
-"""
-Financial Health Score (0–100) based on financial behaviors.
-
-What it uses (all inputs are user-provided, simple + hackathon-friendly):
-- Savings rate (saved/invested as % of income)
-- Emergency fund months (cash / essential monthly expenses)
-- High-interest debt burden (high-interest debt payments as % of income)
-- Tax-advantaged investing share (0–1)
-- Diversification score (0–1) OR compute from portfolio weights
-- Optional charity rate (as % of income)
-
-Outputs:
-- total score (0–100)
-- subscores (0–1 each)
-- plain-language recommendations
-"""
-
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Sequence
