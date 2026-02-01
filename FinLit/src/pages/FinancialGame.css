@@ -16,20 +16,56 @@
   top: 1rem;
   left: 1rem;
   z-index: 10;
-  padding: 0.5rem 1rem;
-  font-size: 0.95rem;
-  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  padding: 0;
+  font-size: 2.75rem;
+  font-weight: 700;
+  line-height: 1;
   color: #5c3d2e;
   background: rgba(255, 255, 255, 0.95);
   border: 2px solid #d4c9bc;
-  border-radius: 999px;
+  border-radius: 50%;
   text-decoration: none;
   box-shadow: 0 2px 8px rgba(45, 31, 20, 0.1);
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .game-back-link:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 12px rgba(45, 31, 20, 0.12);
+  border-color: #a88b6a;
+}
+
+.game-forward-link {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  left: auto;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  padding: 0;
+  font-size: 2.75rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #5c3d2e;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid #d4c9bc;
+  border-radius: 50%;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(45, 31, 20, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.game-forward-link:hover {
+  transform: translateY(-2px) scale(1.05);
   box-shadow: 0 4px 12px rgba(45, 31, 20, 0.12);
   border-color: #a88b6a;
 }
@@ -54,7 +90,7 @@
 
 .game-bottom-icons {
   position: absolute;
-  bottom: 2rem;
+  bottom: 0.5rem;
   left: 0;
   right: 0;
   z-index: 1;
@@ -63,6 +99,7 @@
   align-items: flex-end;
   gap: 3rem;
   padding: 0 1rem;
+  transform: translateY(20px);
 }
 
 .game-bottom-icon-wrap {
@@ -115,6 +152,15 @@
   transform: scale(1.08);
 }
 
+<<<<<<< HEAD
+=======
+.game-cashstash-wrap {
+  position: relative;
+  display: inline-block;
+  transform: translate(40px, calc(-70% + 240px));
+}
+
+>>>>>>> fa537676342b9f377f1164ef1efcf179548472cd
 .game-cashstash-wrap--clickable {
   cursor: pointer;
 }
@@ -264,6 +310,7 @@
 }
 
 .game-info-modal {
+  position: relative;
   background: #fffefb;
   border: 2px solid #e8e0d5;
   border-radius: 1rem;
@@ -276,6 +323,41 @@
   flex-direction: column;
   font-family: 'Comic Sans MS', 'Chalkboard SE', system-ui, sans-serif;
   letter-spacing: 0.01em;
+}
+
+.game-info-modal-close-x {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 1;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  line-height: 1;
+  color: #5c3d2e;
+  background: transparent;
+  border: none;
+  border-radius: 0.35rem;
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.game-info-modal-close-x:hover {
+  color: #2d1f14;
+  background: rgba(45, 31, 20, 0.08);
+}
+
+.game-info-modal-close-x:focus {
+  outline: none;
+}
+
+.game-info-modal-close-x:focus-visible {
+  outline: 2px solid #a88b6a;
+  outline-offset: 2px;
 }
 
 .game-info-modal-header {
@@ -413,6 +495,81 @@
   max-width: 12rem;
 }
 
+.game-transfer-section {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(45, 31, 20, 0.12);
+}
+
+.game-transfer-balance {
+  margin: 0 0 0.35rem;
+  font-size: 0.95rem;
+  color: #3d3229;
+}
+
+.game-transfer-balance strong {
+  color: #2d1f14;
+}
+
+.game-transfer-hint {
+  margin: 0 0 0.75rem;
+  font-size: 0.85rem;
+  color: #6b5344;
+}
+
+.game-transfer-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #3d3229;
+}
+
+.game-transfer-input {
+  max-width: 12rem;
+  padding: 0.65rem 0.9rem;
+  font-size: 1rem;
+  font-family: inherit;
+  border: 2px solid #d4c9bc;
+  border-radius: 0.5rem;
+  background: #fff;
+  color: #2d1f14;
+}
+
+.game-transfer-input::placeholder {
+  color: #9a8b7a;
+}
+
+.game-transfer-input:focus {
+  outline: none;
+  border-color: #8b7355;
+  box-shadow: 0 0 0 3px rgba(139, 115, 90, 0.15);
+}
+
+.game-transfer-section .game-transfer-label {
+  margin-top: 0;
+}
+
+.game-transfer-error {
+  margin: 0.5rem 0 0.75rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: #b91c1c;
+  background: rgba(185, 28, 28, 0.08);
+  border-radius: 0.5rem;
+}
+
+.game-transfer-btn {
+  margin-top: 0.5rem;
+}
+
+.game-transfer-btn--full {
+  width: 100%;
+  display: block;
+}
+
 .game-info-modal-close {
   margin: 0 1.5rem 1.25rem;
   align-self: center;
@@ -438,6 +595,13 @@
   font-weight: 800;
   color: #2d1f14;
   letter-spacing: 0.02em;
+}
+
+.game-cashstash-modal-summary {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  color: #5c3d2e;
+  font-weight: 500;
 }
 
 .game-cashstash-modal-subtitle {

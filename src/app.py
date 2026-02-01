@@ -624,7 +624,7 @@ def simulate_year():
         
     except Exception as e:
         # don’t crash the whole endpoint if yfinance fails
-        price_and_value_stocks(stocks,year) = {}, 0.0
+        predicted_stocks, total_stock_value = {}, 0.0
 
     # Life event
     preview = bool(d.get('preview', False))
